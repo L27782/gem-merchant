@@ -1,0 +1,445 @@
+/* ============================================================================
+ * 《宝石商人》样式  style.css  —— 2D 卡通占位图（纯 CSS 绘制）
+ * ============================================================================ */
+
+:root {
+  --bg: #fff7ec;
+  --ink: #3a2e22;
+  --primary: #f5a623;
+  --primary-dark: #d98a12;
+  --card: #ffffff;
+  --wood: #8a5a28;
+  --wood-light: #b5803f;
+  --green: #2ecc71;
+  --red: #e74c3c;
+  --shadow: 0 6px 18px rgba(60, 40, 10, 0.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+#app { min-height: 100vh; }
+
+.hidden { display: none !important; }
+
+/* ---------------- 通用按钮 ---------------- */
+.btn {
+  display: inline-block;
+  padding: 12px 26px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
+  font-family: inherit;
+  color: #fff;
+}
+.btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+.btn:active { transform: translateY(0); }
+.btn.primary { background: linear-gradient(135deg, #ffb347, #f08519); box-shadow: 0 4px 12px rgba(240, 133, 25, 0.4); }
+.btn.ghost { background: #fff; color: var(--ink); border: 2px solid #e5d9c8; box-shadow: none; }
+.btn.ghost:hover { border-color: var(--primary); color: var(--primary-dark); }
+
+/* ---------------- 屏幕通用 ---------------- */
+.screen { padding: 28px 18px 60px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+.page-title { font-size: 28px; margin: 10px 0 6px; }
+.page-hint { color: #9a8a75; margin-bottom: 18px; font-size: 14px; }
+
+/* ---------------- 前传 ---------------- */
+#screen-prologue {
+  padding: 0;
+  position: relative;
+  background: linear-gradient(#ffe9c7, #ffd39a 60%, #f0c483 60%);
+  justify-content: flex-end;
+}
+.prologue-scene { position: absolute; inset: 0; }
+.prologue-sun {
+  position: absolute; top: 8%; left: 12%;
+  width: 90px; height: 90px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #fff7d0, #ffd166);
+  box-shadow: 0 0 40px rgba(255, 209, 102, 0.8);
+}
+.prologue-ground {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 34%;
+  background: linear-gradient(#cdb58a, #9a8157);
+}
+.prologue-house {
+  position: absolute; left: 13%; bottom: 30%; width: 150px; height: 118px;
+  background: #9c6a3a; border-radius: 6px;
+  box-shadow: 0 8px 0 #7a4c26;
+  transform: rotate(-1.5deg);
+}
+.prologue-house::before {
+  content: ""; position: absolute; left: -10%; top: -28%; width: 120%; height: 30%;
+  background: #7a5122; clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.prologue-house::after {
+  content: ""; position: absolute; left: 24%; top: 40%; width: 52%; height: 3px;
+  background: #5f3c1e; box-shadow: 0 13px 0 #5f3c1e, 0 26px 0 #5f3c1e;
+}
+.prologue-magnifier {
+  position: absolute; right: 15%; top: 14%; width: 72px; height: 72px;
+  border-radius: 50%; border: 8px solid #a86b2a;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6), rgba(185,225,255,0.25));
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+.prologue-magnifier::after {
+  content: ""; position: absolute; right: -14px; bottom: -14px; width: 42px; height: 17px;
+  background: linear-gradient(180deg, #b0783a, #6f4318); border-radius: 9px;
+  transform: rotate(45deg);
+}
+.prologue-rocks { position: absolute; right: 18%; bottom: 26%; width: 180px; height: 60px; }
+.prologue-rocks span { position: absolute; display: block; border-radius: 50%; background: #9a9a9a; }
+.prologue-rocks span:nth-child(1) { left: 0; bottom: 0; width: 44px; height: 32px; }
+.prologue-rocks span:nth-child(2) { left: 46px; bottom: 6px; width: 30px; height: 22px; background: #8a8a8a; }
+.prologue-rocks span:nth-child(3) { left: 96px; bottom: 2px; width: 38px; height: 28px; background: #7a7a7a; }
+.prologue-rocks span.glow { left: 58px; bottom: 12px; width: 20px; height: 15px; background: #27ae60; box-shadow: 0 0 14px #27ae60; }
+.prologue-text {
+  position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
+  width: min(640px, 88%);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 18px;
+  padding: 26px 30px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.8;
+}
+.p-speaker { font-weight: 700; color: var(--primary-dark); margin-bottom: 8px; }
+.prologue-buttons {
+  position: relative; z-index: 2;
+  display: flex; gap: 12px; padding: 0 0 44px;
+}
+
+/* ---------------- 主页 ---------------- */
+.home-inner { text-align: center; margin-top: 8vh; }
+.game-title h1 { font-size: 52px; letter-spacing: 2px; }
+.subtitle { color: #9a8a75; font-size: 16px; margin: 6px 0 30px; }
+.home-status { display: flex; gap: 14px; justify-content: center; margin-bottom: 40px; flex-wrap: wrap; }
+.status-chip {
+  background: var(--card); border-radius: 999px; padding: 10px 22px;
+  box-shadow: var(--shadow); font-size: 16px;
+}
+.status-chip b { color: var(--primary-dark); }
+.menu { display: flex; flex-direction: column; gap: 14px; width: min(320px, 86%); margin: 0 auto; }
+.menu-btn {
+  padding: 16px; font-size: 18px; font-weight: 600;
+  border: none; border-radius: 16px; cursor: pointer; font-family: inherit;
+  background: var(--card); color: var(--ink); box-shadow: var(--shadow);
+  transition: transform 0.12s, background 0.12s;
+}
+.menu-btn:hover { transform: translateY(-2px); background: #fff4e0; }
+.menu-btn.primary { background: linear-gradient(135deg, #ffb347, #f08519); color: #fff; }
+
+/* ---------------- 关卡 / 小关卡 ---------------- */
+.chapter-list { display: flex; flex-direction: column; gap: 16px; width: min(460px, 94%); margin-bottom: 26px; }
+.chapter-card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 20px; border: none; border-radius: 16px; cursor: pointer;
+  background: var(--card); box-shadow: var(--shadow); font-family: inherit; text-align: left;
+  transition: transform 0.12s, background 0.12s;
+}
+.chapter-card:hover { transform: translateY(-2px); background: #fff4e0; }
+.chapter-card.pending { opacity: 0.55; cursor: not-allowed; }
+.chapter-icon { font-size: 34px; }
+.chapter-name { font-size: 18px; font-weight: 700; flex: 1; }
+.chapter-progress { font-size: 14px; color: #9a8a75; }
+
+.sublevel-list { display: flex; flex-direction: column; gap: 12px; width: min(440px, 94%); margin-bottom: 26px; }
+.sublevel-card {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px; border: none; border-radius: 14px; cursor: pointer;
+  background: var(--card); box-shadow: var(--shadow); font-family: inherit; font-size: 17px;
+  transition: transform 0.12s, background 0.12s;
+}
+.sublevel-card:hover { transform: translateY(-2px); background: #fff4e0; }
+.sublevel-card.passed .sublevel-name { color: #9a8a75; }
+.sublevel-badge { font-size: 13px; color: var(--primary-dark); font-weight: 600; }
+.sublevel-card.passed .sublevel-badge { color: var(--green); }
+
+/* ---------------- 游戏场景 ---------------- */
+#screen-game { padding: 0; display: flex; flex-direction: column; height: 100vh; position: relative; }
+
+.game-hud {
+  position: relative; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  gap: 10px;
+}
+.hud-item { font-size: 18px; font-weight: 700; min-width: 70px; }
+.hud-item.lives { text-align: right; font-size: 20px; }
+.hud-title { flex: 1; text-align: center; font-size: 16px; font-weight: 700; color: #6b5840; }
+
+.stall-scene {
+  position: relative; flex: 1; overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 8%, #fff7d0 0 40px, transparent 41px),
+    linear-gradient(#bde3ff 0%, #dff2ff 40%, #cfe8c8 40%, #8dbb7a 100%);
+  cursor: none;
+}
+.scene-hint {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,255,255,0.85); padding: 6px 16px; border-radius: 999px;
+  font-size: 13px; color: #6b5840; white-space: nowrap;
+}
+
+/* 摊主 */
+.stall-owner {
+  position: absolute; right: 4%; bottom: 12%; width: 96px; height: 210px; z-index: 3;
+}
+.owner-head {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 70px; height: 74px; border-radius: 50%;
+  background: #ffe0bd; border: 3px solid #d9a066;
+}
+.owner-eye { position: absolute; top: 30px; width: 8px; height: 10px; border-radius: 50%; background: #3a2e22; }
+.owner-eye.l { left: 18px; } .owner-eye.r { right: 18px; }
+.owner-mouth { position: absolute; top: 48px; left: 50%; transform: translateX(-50%); width: 16px; height: 7px; border-bottom: 3px solid #c96a4a; border-radius: 0 0 12px 12px; }
+.owner-body {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 74px; height: 120px; border-radius: 16px 16px 8px 8px;
+  background: linear-gradient(#6b4f8a, #4a3563);
+}
+
+/* 摊子 */
+.stall { position: absolute; bottom: 9%; left: 50%; transform: translateX(-50%); width: 80%; height: 46%; z-index: 2; }
+.stall-awning {
+  position: absolute; top: 0; left: -1.5%; width: 103%; height: 16%;
+  background: repeating-linear-gradient(90deg, #e74c3c 0 46px, #fffdf5 46px 92px);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.08);
+}
+.stall-awning-stripes {
+  position: absolute; top: 16%; left: -1.5%; width: 103%; height: 6%;
+  background: repeating-linear-gradient(90deg, #fffdf5 0 46px, #e74c3c 46px 92px);
+}
+.gems-container { position: absolute; left: 0; right: 0; top: 24%; bottom: 22%; }
+.stall-table {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 22%;
+  background: linear-gradient(#c89452, #9a6a2f);
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(60, 40, 10, 0.3);
+}
+.stall-table::after {
+  content: ""; position: absolute; left: 6%; right: 6%; top: 60%; height: 8px;
+  background: #7a5122; border-radius: 4px;
+}
+
+/* ---------------- 宝石 ---------------- */
+.gem {
+  position: absolute;
+  width: 58px; height: 58px;
+  clip-path: polygon(50% 0%, 100% 42%, 78% 100%, 22% 100%, 0% 42%);
+  transition: transform 0.16s ease, filter 0.16s ease, opacity 0.3s;
+  z-index: 1;
+}
+.gem:hover, .gem.hovered {
+  transform: scale(1.55) rotate(0deg) !important;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9));
+  z-index: 4;
+}
+.gem-facet {
+  position: absolute; left: 18%; top: 8%; width: 26%; height: 40%;
+  background: rgba(255, 255, 255, 0.45);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.gem::after {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 900; color: #fff;
+  opacity: 0; transition: opacity 0.2s;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.gem-0 { background: radial-gradient(circle at 30% 26%, #a6cfc2, #6fa08f 55%, #3f6a5b); }
+.gem-1 { background: radial-gradient(circle at 30% 26%, #a4c9a6, #6e9a74 55%, #3e6144); }
+.gem-2 { background: radial-gradient(circle at 30% 26%, #a3c0cf, #6d92a6 55%, #3c5866); }
+.gem-3 { background: radial-gradient(circle at 30% 26%, #9ed0b2, #63a07e 55%, #37624b); }
+.gem-4 { background: radial-gradient(circle at 30% 26%, #a9b8c2, #7a8e99 55%, #44535d); }
+.gem-5 { background: radial-gradient(circle at 30% 26%, #a3cec8, #6fa39d 55%, #3e635e); }
+.gem-6 { background: radial-gradient(circle at 30% 26%, #b0bd9f, #869574 55%, #4e5a41); }
+
+.gem.correct { opacity: 1; z-index: 5; filter: drop-shadow(0 0 12px #2ecc71); }
+.gem.correct::after { content: "✓"; opacity: 1; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+.gem.wrong { filter: grayscale(1) brightness(0.55); opacity: 0.85; pointer-events: none; }
+.gem.wrong::after { content: "✗"; opacity: 1; color: #ff7b7b; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+
+/* ---------------- 放大镜 ---------------- */
+.magnifier {
+  position: fixed; width: 78px; height: 78px;
+  transform: translate(-50%, -50%);
+  pointer-events: none; z-index: 30;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+.mag-lens {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 7px solid #a86b2a;
+  background: radial-gradient(circle at 34% 30%, rgba(255,255,255,0.65), rgba(185,225,255,0.28) 45%, rgba(110,150,190,0.18));
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.18);
+}
+.mag-handle {
+  position: absolute; right: -13px; bottom: -13px;
+  width: 42px; height: 16px;
+  background: linear-gradient(180deg, #b0783a, #6f4318);
+  border-radius: 8px;
+  transform: rotate(45deg);
+}
+
+/* ---------------- 宝石知识弹窗 ---------------- */
+.gem-popup {
+  position: absolute; z-index: 40; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(480px, 90%); background: #fff; border-radius: 18px; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  padding: 20px 22px;
+}
+.popup-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.popup-dot { width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(135deg, #ffb347, #f08519); }
+.popup-title { font-size: 19px; font-weight: 700; }
+.popup-content { font-size: 16px; line-height: 1.8; color: #4a3b2c; margin-bottom: 18px; max-height: 40vh; overflow-y: auto; }
+.popup-buttons { display: flex; gap: 12px; justify-content: flex-end; }
+
+/* ---------------- 弹窗 ---------------- */
+.modal {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(40, 30, 15, 0.45);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-box {
+  background: #fff; border-radius: 20px; padding: 28px; width: min(440px, 94%);
+  text-align: center; box-shadow: 0 16px 50px rgba(0,0,0,0.3);
+}
+.modal-title { font-size: 24px; font-weight: 800; margin-bottom: 12px; }
+.modal-message { font-size: 16px; line-height: 1.8; color: #4a3b2c; white-space: pre-line; margin-bottom: 22px; }
+.modal-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------------- 轻提示 ---------------- */
+.toast {
+  position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+  z-index: 70; background: #3a2e22; color: #fff; padding: 12px 22px;
+  border-radius: 999px; font-size: 15px; box-shadow: var(--shadow);
+  animation: pop 0.25s ease;
+}
+.toast.warn { background: #c0392b; }
+@keyframes pop { from { transform: translateX(-50%) scale(0.85); opacity: 0; } to { transform: translateX(-50%) scale(1); opacity: 1; } }
+
+/* ---------------- 生活状况 ---------------- */
+.life-stage {
+  position: relative; width: min(480px, 94%); height: 300px;
+  background: linear-gradient(#bde3ff 0%, #dff2ff 55%, #a9cf92 55%, #7fa768);
+  border-radius: 18px; overflow: hidden; margin: 16px 0; box-shadow: var(--shadow);
+}
+.life-stage .life-house { position: absolute; left: 10%; bottom: 26%; width: 230px; height: 170px; }
+.life-stage .life-character { position: absolute; right: 16%; bottom: 8%; width: 90px; height: 200px; }
+.life-tier-name { font-size: 30px; font-weight: 800; margin-top: 6px; }
+.life-desc { color: #6b5840; margin: 8px 0 18px; font-size: 15px; }
+
+.life-progress-wrap { width: min(480px, 94%); margin-bottom: 10px; }
+.life-progress { height: 14px; border-radius: 999px; background: #efe5d4; overflow: hidden; }
+.life-progress::after { content: ""; display: block; height: 100%; width: var(--w, 0%); background: linear-gradient(90deg, #ffb347, #f08519); border-radius: 999px; transition: width 0.4s; }
+.life-progress-text { font-size: 13px; color: #9a8a75; margin-top: 8px; text-align: center; }
+
+.life-tiers-list { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: min(520px, 94%); margin: 14px 0 26px; }
+.tier-chip {
+  display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+  border-radius: 999px; background: #fff; box-shadow: var(--shadow); font-size: 14px; color: #b3a58f;
+}
+.tier-chip.reached { color: #6b5840; }
+.tier-chip.current { background: linear-gradient(135deg, #ffb347, #f08519); color: #fff; font-weight: 700; }
+.tier-dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd2c0; }
+.tier-chip.reached .tier-dot { background: #f08519; }
+.tier-chip.current .tier-dot { background: #fff; }
+
+/* 角色（服饰随档位变化） */
+.life-character .life-head {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 66px; height: 68px; border-radius: 50%; background: #ffe0bd; border: 3px solid #d9a066;
+}
+.life-character .life-body {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 72px; height: 120px; border-radius: 18px 18px 6px 6px;
+}
+.clothes-rags .life-body { background: #9c8a72; }
+.clothes-coarse .life-body { background: #cbb994; }
+.clothes-plain .life-body { background: #7fb0d9; }
+.clothes-good .life-body { background: linear-gradient(#3fa66b, #2c7a4d); }
+.clothes-rich .life-body { background: linear-gradient(135deg, #ffd700, #d4a017); box-shadow: inset 0 0 0 3px rgba(255,255,255,0.35); }
+.clothes-luxury .life-body { background: linear-gradient(135deg, #5a3a8a, #3a2358); box-shadow: inset 0 0 0 3px rgba(255,215,0,0.6); }
+
+/* 房子（随档位变化） */
+.life-house { position: relative; }
+.life-house::before, .life-house::after { content: ""; position: absolute; }
+.house-shack {
+  background: #a06a3a; border-radius: 6px;
+  transform: rotate(-1.5deg);
+  box-shadow: 0 6px 0 #7a4c26;
+}
+.house-shack::before {
+  left: -12%; top: -24%; width: 124%; height: 26%;
+  background: #8a5a28; clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.house-shack::after {
+  left: 20%; top: 40%; width: 60%; height: 3px; background: #5f3c1e;
+  box-shadow: 0 10px 0 #5f3c1e;
+}
+.house-rough {
+  background: #b8b0a6; border-radius: 4px;
+  box-shadow: 0 6px 0 #8f887e;
+}
+.house-rough::before {
+  left: 0; top: -20%; width: 100%; height: 22%; background: #9a9288;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.house-modest {
+  background: #e7d9b8; border-radius: 6px;
+  box-shadow: 0 6px 0 #bfa87c;
+}
+.house-modest::before {
+  left: -6%; top: -26%; width: 112%; height: 28%;
+  background: #d98a4a; clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.house-modest::after {
+  left: 42%; top: 42%; width: 16%; height: 24%; background: #7fb0d9; border: 3px solid #fff;
+}
+.house-nice {
+  background: #f4e3c3; border-radius: 8px;
+  box-shadow: 0 6px 0 #c9ad7f;
+}
+.house-nice::before {
+  left: -6%; top: -30%; width: 112%; height: 30%;
+  background: #e86b4a; clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.house-nice::after {
+  left: 12%; top: 40%; width: 20%; height: 30%; background: #7fb0d9; border: 3px solid #fff;
+  box-shadow: 46px 0 0 #7fb0d9;
+}
+.house-villa {
+  background: #f8ead0; border-radius: 6px;
+  box-shadow: 0 6px 0 #cfae7c;
+}
+.house-villa::before {
+  left: -8%; top: -34%; width: 116%; height: 34%;
+  background: #c0392b; clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.house-villa::after {
+  left: 8%; top: 0; width: 8px; height: 100%; background: #fff;
+  box-shadow: 74px 0 0 #fff;
+}
+.house-castle {
+  background: #b7b2a8; border-radius: 4px;
+  box-shadow: 0 6px 0 #847f75;
+}
+.house-castle::before {
+  left: -18%; top: -8%; width: 30%; height: 55%; background: #a49f95; border-radius: 6px 6px 0 0;
+  box-shadow: 62px -10px 0 #a49f95, 124px 0 0 #a49f95, -24px -34px 0 #c0392b, 100px -44px 0 #2c5fb8;
+}
+.house-castle::after {
+  left: 0; top: -26%; width: 100%; height: 16%;
+  background: repeating-linear-gradient(90deg, #a49f95 0 22px, #8f8a80 22px 44px);
+}
