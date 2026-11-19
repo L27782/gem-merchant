@@ -52,71 +52,39 @@ html, body {
 .page-title { font-size: 28px; margin: 10px 0 6px; }
 .page-hint { color: #9a8a75; margin-bottom: 18px; font-size: 14px; }
 
-/* ---------------- 前传 ---------------- */
+/* ---------------- 前传（图片 + 底部字幕） ---------------- */
 #screen-prologue {
   padding: 0;
   position: relative;
-  background: linear-gradient(#ffe9c7, #ffd39a 60%, #f0c483 60%);
+  background: #140d05;
+  overflow: hidden;
   justify-content: flex-end;
 }
 .prologue-scene { position: absolute; inset: 0; }
-.prologue-sun {
-  position: absolute; top: 8%; left: 12%;
-  width: 90px; height: 90px; border-radius: 50%;
-  background: radial-gradient(circle at 40% 40%, #fff7d0, #ffd166);
-  box-shadow: 0 0 40px rgba(255, 209, 102, 0.8);
+.prologue-bg {
+  position: absolute; inset: 0;
+  background-color: #140d05;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
-.prologue-ground {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 34%;
-  background: linear-gradient(#cdb58a, #9a8157);
+.prologue-buttons {
+  position: absolute; top: 14px; right: 16px; z-index: 5;
+  display: flex; gap: 10px;
 }
-.prologue-house {
-  position: absolute; left: 13%; bottom: 30%; width: 150px; height: 118px;
-  background: #9c6a3a; border-radius: 6px;
-  box-shadow: 0 8px 0 #7a4c26;
-  transform: rotate(-1.5deg);
-}
-.prologue-house::before {
-  content: ""; position: absolute; left: -10%; top: -28%; width: 120%; height: 30%;
-  background: #7a5122; clip-path: polygon(50% 0, 100% 100%, 0 100%);
-}
-.prologue-house::after {
-  content: ""; position: absolute; left: 24%; top: 40%; width: 52%; height: 3px;
-  background: #5f3c1e; box-shadow: 0 13px 0 #5f3c1e, 0 26px 0 #5f3c1e;
-}
-.prologue-magnifier {
-  position: absolute; right: 15%; top: 14%; width: 72px; height: 72px;
-  border-radius: 50%; border: 8px solid #a86b2a;
-  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6), rgba(185,225,255,0.25));
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-}
-.prologue-magnifier::after {
-  content: ""; position: absolute; right: -14px; bottom: -14px; width: 42px; height: 17px;
-  background: linear-gradient(180deg, #b0783a, #6f4318); border-radius: 9px;
-  transform: rotate(45deg);
-}
-.prologue-rocks { position: absolute; right: 18%; bottom: 26%; width: 180px; height: 60px; }
-.prologue-rocks span { position: absolute; display: block; border-radius: 50%; background: #9a9a9a; }
-.prologue-rocks span:nth-child(1) { left: 0; bottom: 0; width: 44px; height: 32px; }
-.prologue-rocks span:nth-child(2) { left: 46px; bottom: 6px; width: 30px; height: 22px; background: #8a8a8a; }
-.prologue-rocks span:nth-child(3) { left: 96px; bottom: 2px; width: 38px; height: 28px; background: #7a7a7a; }
-.prologue-rocks span.glow { left: 58px; bottom: 12px; width: 20px; height: 15px; background: #27ae60; box-shadow: 0 0 14px #27ae60; }
 .prologue-text {
-  position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
-  width: min(640px, 88%);
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 18px;
-  padding: 26px 30px;
-  box-shadow: var(--shadow);
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 4;
+  padding: 46px 24px 22px;
+  background: linear-gradient(to top, rgba(10,6,2,0.92) 0%, rgba(10,6,2,0.72) 55%, transparent 100%);
+  color: #fff;
   text-align: center;
   font-size: 18px;
   line-height: 1.8;
+  max-height: 60vh;
+  overflow-y: auto;
 }
-.p-speaker { font-weight: 700; color: var(--primary-dark); margin-bottom: 8px; }
-.prologue-buttons {
-  position: relative; z-index: 2;
-  display: flex; gap: 12px; padding: 0 0 44px;
-}
+.prologue-text p { margin: 0; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+.p-speaker { font-weight: 700; color: #ffcf7a; margin-bottom: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
 
 /* ---------------- 主页 ---------------- */
 .home-inner { text-align: center; margin-top: 8vh; }

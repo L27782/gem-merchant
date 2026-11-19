@@ -126,9 +126,21 @@
   let pg = 0;
   function renderPrologue() {
     const seg = DATA.prologue[pg];
-    $("#prologue-text").innerHTML = seg
-      ? '<div class="p-speaker">' + seg.speaker + '</div><p>' + seg.text + "</p>"
-      : "";
+    const bg = $("#prologue-bg");
+    const textEl = $("#prologue-text");
+    if (seg && seg.image) {
+      bg.style.backgroundImage = 'url("' + seg.image + '")';
+    } else {
+      bg.style.backgroundImage = "none";
+    }
+    if (seg && seg.noText) {
+      textEl.classList.add("hidden");
+    } else {
+      textEl.classList.remove("hidden");
+      textEl.innerHTML = seg
+        ? '<div class="p-speaker">' + seg.speaker + '</div><p>' + seg.text + "</p>"
+        : "";
+    }
     $("#prologue-next").textContent = pg >= DATA.prologue.length - 1 ? "开始游戏" : "下一步 ▶";
   }
 
