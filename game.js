@@ -236,7 +236,7 @@
 
   const STALL_SCENES = {
     portrait: {
-      src: "stall-portrait.jpg", w: 1030, h: 2136,
+      src: "stall-portrait.jpg?v=2", w: 1030, h: 2136,
       spots: [
         { fx: 0.245, fy: 0.539 },
         { fx: 0.44, fy: 0.518 },
@@ -245,7 +245,7 @@
       ],
     },
     landscape: {
-      src: "stall-landscape.jpg", w: 2015, h: 1053,
+      src: "stall-landscape.jpg?v=2", w: 2015, h: 1053,
       spots: [
         { fx: 0.267, fy: 0.556 },
         { fx: 0.424, fy: 0.544 },
