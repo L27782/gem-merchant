@@ -186,13 +186,12 @@
       const total = ch.subLevels.length;
       const passedCount = ch.subLevels.filter((s) => passed(ch.id, s.id)).length;
       const ready = !ch.pending && total > 0;
-      const pct = total ? Math.round(passedCount / total * 100) : 0;
       const card = document.createElement("button");
-      card.className = "plank" + (ready ? "" : " pending");
+      card.className = "chapter-card" + (ready ? "" : " pending");
       card.innerHTML =
-        '<span class="plank-name">' + ch.name + '</span>' +
-        '<span class="plank-bar"><span class="plank-bar-fill" style="width:' + pct + '%"></span></span>' +
-        '<span class="plank-count">' + (ready ? passedCount + " / " + total : "待上线") + '</span>';
+        '<div class="chapter-icon">' + ch.icon + '</div>' +
+        '<div class="chapter-name">' + ch.name + '</div>' +
+        '<div class="chapter-progress">' + (ready ? passedCount + " / " + total : "待上线") + '</div>';
       if (ready) card.addEventListener("click", () => showSubLevels(ch.id));
       list.appendChild(card);
     });
@@ -231,16 +230,18 @@
     buildStall(sl);
     closeGemPopup();
     show("screen-game");
+    positionHotspots();
     toast("找出正确的知识点宝石！");
   }
 
+  const STALL_IMG = { w: 1536, h: 1536 };
   const ROCK_SPOTS = [
-    { left: 12, top: 46 },
-    { left: 30, top: 41 },
-    { left: 45, top: 50 },
-    { left: 21, top: 59 },
-    { left: 54, top: 55 },
-    { left: 65, top: 58 },
+    { fx: 0.09, fy: 0.48 },
+    { fx: 0.30, fy: 0.42 },
+    { fx: 0.42, fy: 0.46 },
+    { fx: 0.19, fy: 0.60 },
+    { fx: 0.53, fy: 0.44 },
+    { fx: 0.64, fy: 0.56 },
   ];
 
   function buildStall(sl) {
@@ -253,16 +254,29 @@
     const container = $("#gems-container");
     container.innerHTML = "";
     gems.forEach((g, i) => {
-      const spot = ROCK_SPOTS[i % ROCK_SPOTS.length];
       const el = document.createElement("div");
       el.className = "rock-hotspot";
-      el.style.left = spot.left + "%";
-      el.style.top = spot.top + "%";
       el.dataset.index = i;
       el.addEventListener("mouseenter", () => setHover(i, true));
       el.addEventListener("mouseleave", () => setHover(i, false));
       el.addEventListener("click", () => onGemClick(i));
       container.appendChild(el);
+    });
+  }
+
+  function positionHotspots() {
+    const scene = $("#stall-scene");
+    if (!scene) return;
+    const rect = scene.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    if (!W || !H) return;
+    const scale = Math.max(W / STALL_IMG.w, H / STALL_IMG.h);
+    const dispW = STALL_IMG.w * scale, dispH = STALL_IMG.h * scale;
+    const offX = (W - dispW) / 2, offY = (H - dispH) / 2;
+    $$("#gems-container .rock-hotspot").forEach((el, i) => {
+      const spot = ROCK_SPOTS[i % ROCK_SPOTS.length];
+      el.style.left = (offX + spot.fx * dispW) + "px";
+      el.style.top = (offY + spot.fy * dispH) + "px";
     });
   }
 
@@ -321,13 +335,14 @@
     markGem(i, "wrong");
     updateHud();
     if (state.wrong >= 3) {
-      showFail();
+      openModal("😞 通关失败", "你已经选错 3 次了，本次关卡未通过。", [
+        { label: "再来一次", cls: "primary", onClick: () => startSubLevel(state.chapterId, state.subId) },
+        { label: "返回主页", cls: "ghost", onClick: goHome },
+      ]);
     } else {
       toast("选错了！还可错 " + (3 - state.wrong) + " 次", "warn");
     }
   }
-
-  function showFail() { show("screen-fail"); }
 
   function markGem(i, cls) {
     const el = $$("#gems-container .rock-hotspot")[i];
@@ -470,9 +485,6 @@
     $("#btn-prologue").addEventListener("click", () => { prologueReturn = "home"; pg = 0; renderPrologue(); show("screen-prologue"); });
     $("#btn-upgrade").addEventListener("click", tryUpgrade);
 
-    $("#fail-retry").addEventListener("click", () => startSubLevel(state.chapterId, state.subId));
-    $("#fail-home").addEventListener("click", goHome);
-
     $("#btn-back-home").addEventListener("click", goHome);
     $("#btn-back-home-2").addEventListener("click", goHome);
     $("#btn-back-levels").addEventListener("click", () => { renderChapters(); show("screen-levels"); });
@@ -488,6 +500,7 @@
   /* ---------------- 启动 ---------------- */
   function init() {
     bind();
+    window.addEventListener("resize", positionHotspots);
     if (DATA.prologue.length === 0) state.prologueSeen = true;
     renderHome();
     show("screen-home");
