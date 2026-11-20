@@ -182,16 +182,19 @@
   function renderChapters() {
     const list = $("#chapter-list");
     list.innerHTML = "";
-    DATA.chapters.forEach((ch) => {
+    const romans = ["Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ"];
+    DATA.chapters.forEach((ch, i) => {
       const total = ch.subLevels.length;
       const passedCount = ch.subLevels.filter((s) => passed(ch.id, s.id)).length;
       const ready = !ch.pending && total > 0;
+      const pct = total ? Math.round(passedCount / total * 100) : 0;
       const card = document.createElement("button");
-      card.className = "chapter-card" + (ready ? "" : " pending");
+      card.className = "plank" + (ready ? "" : " pending");
       card.innerHTML =
-        '<div class="chapter-icon">' + ch.icon + '</div>' +
-        '<div class="chapter-name">' + ch.name + '</div>' +
-        '<div class="chapter-progress">' + (ready ? passedCount + " / " + total : "待上线") + '</div>';
+        '<span class="plank-roman">' + (romans[i] || (i + 1)) + '</span>' +
+        '<span class="plank-name">' + ch.name + '</span>' +
+        '<span class="plank-bar"><span class="plank-bar-fill" style="width:' + pct + '%"></span></span>' +
+        '<span class="plank-count">' + (ready ? passedCount + " / " + total : "待上线") + '</span>';
       if (ready) card.addEventListener("click", () => showSubLevels(ch.id));
       list.appendChild(card);
     });
