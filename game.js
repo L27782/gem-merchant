@@ -230,18 +230,11 @@
     buildStall(sl);
     closeGemPopup();
     show("screen-game");
-    positionHotspots();
     toast("找出正确的知识点宝石！");
   }
 
-  const STALL_IMG = { w: 1536, h: 1536 };
-  const ROCK_SPOTS = [
-    { fx: 0.09, fy: 0.48 },
-    { fx: 0.30, fy: 0.42 },
-    { fx: 0.42, fy: 0.46 },
-    { fx: 0.19, fy: 0.60 },
-    { fx: 0.53, fy: 0.44 },
-    { fx: 0.64, fy: 0.56 },
+  const GEM_SPOTS = [
+    [14, 24], [40, 16], [67, 28], [24, 54], [52, 48], [79, 62], [37, 80],
   ];
 
   function buildStall(sl) {
@@ -255,40 +248,34 @@
     container.innerHTML = "";
     gems.forEach((g, i) => {
       const el = document.createElement("div");
-      el.className = "rock-hotspot";
+      el.className = "gem gem-" + (i % 7);
       el.dataset.index = i;
       el.addEventListener("mouseenter", () => setHover(i, true));
       el.addEventListener("mouseleave", () => setHover(i, false));
       el.addEventListener("click", () => onGemClick(i));
       container.appendChild(el);
     });
+    layoutGems();
   }
 
-  function positionHotspots() {
-    const scene = $("#stall-scene");
-    if (!scene) return;
-    const rect = scene.getBoundingClientRect();
-    const W = rect.width, H = rect.height;
-    if (!W || !H) return;
-    const scale = Math.max(W / STALL_IMG.w, H / STALL_IMG.h);
-    const dispW = STALL_IMG.w * scale, dispH = STALL_IMG.h * scale;
-    const offX = (W - dispW) / 2, offY = (H - dispH) / 2;
-    $$("#gems-container .rock-hotspot").forEach((el, i) => {
-      const spot = ROCK_SPOTS[i % ROCK_SPOTS.length];
-      el.style.left = (offX + spot.fx * dispW) + "px";
-      el.style.top = (offY + spot.fy * dispH) + "px";
+  function layoutGems() {
+    const els = $$("#gems-container .gem");
+    els.forEach((el, i) => {
+      const p = GEM_SPOTS[i % GEM_SPOTS.length];
+      el.style.left = p[0] + "%";
+      el.style.top = p[1] + "%";
     });
   }
 
   function setHover(i, on) {
-    const el = $$("#gems-container .rock-hotspot")[i];
+    const el = $$("#gems-container .gem")[i];
     if (!el || el.classList.contains("wrong")) return;
     el.classList.toggle("hovered", on);
     state.hovered = on ? i : null;
   }
 
   function onGemClick(i) {
-    const el = $$("#gems-container .rock-hotspot")[i];
+    const el = $$("#gems-container .gem")[i];
     if (!el || el.classList.contains("wrong")) return;
     const g = state.gems[i];
     state.inspecting = i;
@@ -345,7 +332,7 @@
   }
 
   function markGem(i, cls) {
-    const el = $$("#gems-container .rock-hotspot")[i];
+    const el = $$("#gems-container .gem")[i];
     if (el) { el.classList.add(cls); el.classList.remove("hovered"); }
   }
 
@@ -500,7 +487,6 @@
   /* ---------------- 启动 ---------------- */
   function init() {
     bind();
-    window.addEventListener("resize", positionHotspots);
     if (DATA.prologue.length === 0) state.prologueSeen = true;
     renderHome();
     show("screen-home");

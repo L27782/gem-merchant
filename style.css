@@ -249,7 +249,7 @@ html, body {
 
 .stall-scene {
   position: relative; flex: 1; width: 100%; overflow: hidden;
-  background: url("stall-bg.jpg") center/cover no-repeat;
+  background: linear-gradient(#efe2cc 0%, #e2cfb2 55%, #c9b394 100%);
   cursor: none;
 }
 .scene-hint {
@@ -277,7 +277,7 @@ html, body {
 }
 
 /* 摊子 */
-.stall { position: absolute; bottom: 9%; left: 50%; transform: translateX(-50%); width: 80%; height: 46%; z-index: 2; }
+.stall { position: absolute; bottom: 7%; left: 50%; transform: translateX(-50%); width: 80%; height: 52%; z-index: 2; }
 .stall-awning {
   position: absolute; top: 0; left: -1.5%; width: 103%; height: 16%;
   background: repeating-linear-gradient(90deg, #e74c3c 0 46px, #fffdf5 46px 92px);
@@ -288,30 +288,48 @@ html, body {
   position: absolute; top: 16%; left: -1.5%; width: 103%; height: 6%;
   background: repeating-linear-gradient(90deg, #fffdf5 0 46px, #e74c3c 46px 92px);
 }
-.gems-container { position: absolute; inset: 0; }
-.rock-hotspot {
-  position: absolute; width: 10%; aspect-ratio: 1 / 1;
-  transform: translate(-50%, -50%);
-  border-radius: 50%; cursor: none;
-  transition: box-shadow 0.15s, background 0.15s;
-}
-.rock-hotspot:hover, .rock-hotspot.hovered {
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.85), 0 0 18px 6px rgba(255,220,120,0.75);
-  background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
-}
-.rock-hotspot.correct {
-  box-shadow: 0 0 0 3px #2ecc71, 0 0 22px 8px rgba(46,204,113,0.8);
-}
-.rock-hotspot.wrong {
-  box-shadow: 0 0 0 3px #e74c3c, 0 0 18px 6px rgba(231,76,60,0.6);
-  filter: grayscale(0.6) brightness(0.65);
-  pointer-events: none;
-}
-.stall-table {
-  position: absolute; bottom: 0; left: 0; width: 100%; height: 22%;
-  background: linear-gradient(#c89452, #9a6a2f);
+.stall-cloth {
+  position: absolute; left: 4%; right: 4%; top: 6%; bottom: 12%;
+  background: linear-gradient(155deg, #c0332f, #962421 55%, #6e1a18);
   border-radius: 10px;
-  box-shadow: 0 10px 20px rgba(60, 40, 10, 0.3);
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.35), inset 0 6px 20px rgba(255,255,255,0.12);
+}
+.gems-container { position: absolute; left: 8%; right: 8%; top: 12%; bottom: 20%; }
+.gem {
+  position: absolute;
+  width: 60px; height: 52px;
+  transform: translate(-50%, -50%);
+  border-radius: 46% 54% 48% 52% / 52% 46% 54% 48%;
+  box-shadow: inset -6px -8px 14px rgba(0,0,0,0.35), inset 6px 8px 14px rgba(255,255,255,0.28), 0 8px 14px rgba(0,0,0,0.35);
+  transition: transform 0.16s, filter 0.16s, opacity 0.3s;
+  z-index: 1;
+}
+.gem:hover, .gem.hovered {
+  transform: translate(-50%, -50%) scale(1.3);
+  filter: drop-shadow(0 0 14px rgba(255,235,160,0.95));
+  z-index: 4;
+}
+.gem.correct {
+  box-shadow: 0 0 0 4px #2ecc71, 0 0 26px 10px rgba(46,204,113,0.85);
+  z-index: 5;
+}
+.gem.wrong {
+  filter: grayscale(0.85) brightness(0.55);
+  box-shadow: 0 0 0 4px #e74c3c;
+  opacity: 0.85; pointer-events: none;
+}
+.gem-0 { background: linear-gradient(135deg, #d3d8dc, #7f8a93 60%, #4d565e); }
+.gem-1 { background: linear-gradient(135deg, #f0e1a8, #d2b25e 55%, #8a6a20); }
+.gem-2 { background: linear-gradient(135deg, #bfc8ce, #717c86 60%, #454e57); }
+.gem-3 { background: linear-gradient(135deg, #efe6c8, #c9b573 55%, #8a7a3a); }
+.gem-4 { background: linear-gradient(135deg, #d6dade, #8b959d 60%, #56606a); }
+.gem-5 { background: linear-gradient(135deg, #f2d99a, #d8a83f 55%, #8a640e); }
+.gem-6 { background: linear-gradient(135deg, #c4ccd2, #7a858f 60%, #4a535b); }
+.stall-table {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(#c89452, #9a6a2f);
+  border-radius: 14px;
+  box-shadow: 0 16px 30px rgba(60, 40, 10, 0.35);
 }
 .stall-table::after {
   content: ""; position: absolute; left: 6%; right: 6%; top: 60%; height: 8px;
