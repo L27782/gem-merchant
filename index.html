@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>宝石商人 · 著作权法邻接权知识学习</title>
-  <link rel="stylesheet" href="style.css?v=7" />
+  <link rel="stylesheet" href="style.css?v=8" />
 </head>
 <body>
   <div id="app">
@@ -137,6 +137,13 @@
       <button id="btn-back-home-2" class="btn ghost">← 返回</button>
     </section>
 
+    <!-- ======================= 失败画面 ======================= -->
+    <section id="screen-fail" class="screen hidden">
+      <div class="fail-bg"></div>
+      <button id="fail-retry" class="fail-hotspot fail-hotspot-retry" aria-label="再来一次"></button>
+      <button id="fail-home" class="fail-hotspot fail-hotspot-home" aria-label="返回主页"></button>
+    </section>
+
     <!-- ======================= 通用弹窗 ======================= -->
     <div id="modal" class="modal hidden">
       <div class="modal-box">
@@ -150,7 +157,7 @@
     <div id="toast" class="toast hidden"></div>
   </div>
 
-  <script src="data.js?v=7"></script>
-  <script src="game.js?v=7"></script>
+  <script src="data.js?v=8"></script>
+  <script src="game.js?v=8"></script>
 </body>
 </html>

@@ -191,6 +191,23 @@ html, body {
 .upgrade-btn { margin-bottom: 10px; }
 .upgrade-btn:disabled { background: #cbbfa9 !important; box-shadow: none !important; cursor: not-allowed; }
 
+/* ---------------- 失败画面 ---------------- */
+#screen-fail {
+  padding: 0; position: relative; overflow: hidden;
+  display: block; height: 100vh;
+}
+.fail-bg {
+  position: absolute; inset: 0;
+  background: url("fail-bg.jpg") center/cover no-repeat;
+}
+.fail-hotspot {
+  position: absolute; border: none; background: transparent; cursor: pointer;
+  border-radius: 12px; -webkit-tap-highlight-color: transparent;
+}
+.fail-hotspot:hover { background: rgba(255,255,255,0.12); }
+.fail-hotspot-retry { left: 43%; top: 71.5%; width: 16%; height: 16.5%; }
+.fail-hotspot-home  { left: 61%; top: 71.5%; width: 16%; height: 16.5%; }
+
 /* ---------------- 关卡选择（木牌页） ---------------- */
 #screen-levels {
   padding: 0; position: relative; overflow: hidden;

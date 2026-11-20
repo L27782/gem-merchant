@@ -45,12 +45,12 @@ window.GAME_DATA = {
 
   /* ───────────────────────── 生活档位（6 档，顺序不可调换） ──────────── */
   lifeTiers: [
-    { name: "一穷二白", clothes: "破衣服",   house: "破房子",     houseStyle: "shack",  clothesStyle: "rags",   image: "life-1.jpg" },
-    { name: "贫困户",   clothes: "粗布麻衣", house: "毛坯房",     houseStyle: "rough",  clothesStyle: "coarse", image: "life-2.jpg" },
-    { name: "小康",     clothes: "一般衣服", house: "微装修房屋", houseStyle: "modest", clothesStyle: "plain",  image: "life-3.jpg" },
-    { name: "中产",     clothes: "好衣服",   house: "精装修房屋", houseStyle: "nice",   clothesStyle: "good",   image: "life-4.jpg" },
-    { name: "暴发户",   clothes: "穿金带银", house: "小别墅",     houseStyle: "villa",  clothesStyle: "rich",   image: "life-5.jpg" },
-    { name: "顶富",     clothes: "有质感衣服", house: "城堡",     houseStyle: "castle", clothesStyle: "luxury", image: "life-6.jpg" },
+    { name: "一穷二白", clothes: "破衣服",   house: "破房子",     houseStyle: "shack",  clothesStyle: "rags",   image: "char-1.jpg" },
+    { name: "贫困户",   clothes: "粗布麻衣", house: "毛坯房",     houseStyle: "rough",  clothesStyle: "coarse", image: "char-2.jpg" },
+    { name: "小康",     clothes: "一般衣服", house: "微装修房屋", houseStyle: "modest", clothesStyle: "plain",  image: "char-3.jpg" },
+    { name: "中产",     clothes: "好衣服",   house: "精装修房屋", houseStyle: "nice",   clothesStyle: "good",   image: "char-4.jpg" },
+    { name: "暴发户",   clothes: "穿金带银", house: "小别墅",     houseStyle: "villa",  clothesStyle: "rich",   image: "char-5.jpg" },
+    { name: "顶富",     clothes: "有质感衣服", house: "城堡",     houseStyle: "castle", clothesStyle: "luxury", image: "char-6.jpg" },
   ],
 
   /* ───────────────────────── 5 大关卡 ──────────────────────────────────── */

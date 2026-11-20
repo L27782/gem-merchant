@@ -327,14 +327,13 @@
     markGem(i, "wrong");
     updateHud();
     if (state.wrong >= 3) {
-      openModal("😞 通关失败", "你已经选错 3 次了，本次关卡未通过。", [
-        { label: "再来一次", cls: "primary", onClick: () => startSubLevel(state.chapterId, state.subId) },
-        { label: "返回主页", cls: "ghost", onClick: goHome },
-      ]);
+      showFail();
     } else {
       toast("选错了！还可错 " + (3 - state.wrong) + " 次", "warn");
     }
   }
+
+  function showFail() { show("screen-fail"); }
 
   function markGem(i, cls) {
     const el = $$("#gems-container .gem")[i];
@@ -476,6 +475,9 @@
     $("#btn-credits").addEventListener("click", showCredits);
     $("#btn-prologue").addEventListener("click", () => { prologueReturn = "home"; pg = 0; renderPrologue(); show("screen-prologue"); });
     $("#btn-upgrade").addEventListener("click", tryUpgrade);
+
+    $("#fail-retry").addEventListener("click", () => startSubLevel(state.chapterId, state.subId));
+    $("#fail-home").addEventListener("click", goHome);
 
     $("#btn-back-home").addEventListener("click", goHome);
     $("#btn-back-home-2").addEventListener("click", goHome);
