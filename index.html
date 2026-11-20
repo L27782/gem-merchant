@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>宝石商人 · 著作权法邻接权知识学习</title>
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
   <div id="app">
@@ -21,27 +21,45 @@
       <div id="prologue-text" class="prologue-text"></div>
     </section>
 
-    <!-- ======================= 主页 ======================= -->
+    <!-- ======================= 主页（生活场景 + 大播放键） ======================= -->
     <section id="screen-home" class="screen hidden">
-      <div class="home-inner">
-        <div class="game-title">
-          <h1>💎 宝石商人</h1>
-          <p class="subtitle">著作权法 · 邻接权 知识学习</p>
+      <div id="home-scene" class="home-scene">
+        <div class="home-scene-sky"></div>
+        <div class="home-scene-ground"></div>
+        <div id="home-house" class="life-house"></div>
+        <div id="home-char" class="life-character">
+          <div class="life-head"></div>
+          <div class="life-body"></div>
         </div>
-
-        <div class="home-status">
-          <div class="status-chip">🪙 金币 <b id="home-coins">0</b></div>
-          <div class="status-chip">🏠 生活状况 <b id="home-tier">一穷二白</b></div>
-        </div>
-
-        <nav class="menu">
-          <button id="btn-start" class="menu-btn primary">开始游戏</button>
-          <button id="btn-levels" class="menu-btn">选择关卡</button>
-          <button id="btn-life" class="menu-btn">我的生活状况</button>
-          <button id="btn-help" class="menu-btn">玩法说明</button>
-          <button id="btn-prologue" class="menu-btn">重看前传</button>
-        </nav>
       </div>
+
+      <div class="home-title">
+        <h1>💎 宝石商人</h1>
+        <p class="subtitle">著作权法 · 邻接权</p>
+      </div>
+
+      <div class="home-right-menu">
+        <button id="btn-help" class="side-btn">玩法说明</button>
+        <button id="btn-knowledge" class="side-btn">知识点说明</button>
+        <button id="btn-credits" class="side-btn">制作构成</button>
+        <button id="btn-prologue" class="side-btn">重看前传</button>
+      </div>
+
+      <div class="home-build">
+        <button id="btn-build" class="build-btn">
+          <span class="build-icon">🔨</span>
+          <span class="build-label">建设</span>
+        </button>
+        <div class="home-progress">
+          <div id="home-progress-fill" class="home-progress-fill"></div>
+          <span id="home-progress-text" class="home-progress-text">0 / 4</span>
+        </div>
+      </div>
+
+      <button id="btn-start" class="play-btn">
+        <span class="play-icon">▶</span>
+        <span class="play-label">开始游戏</span>
+      </button>
     </section>
 
     <!-- ======================= 关卡选择 ======================= -->
@@ -107,7 +125,7 @@
 
     <!-- ======================= 生活状况 ======================= -->
     <section id="screen-life" class="screen hidden">
-      <h2 class="page-title">我的生活状况</h2>
+      <h2 class="page-title">建设 · 我的生活状况</h2>
       <div class="life-stage">
         <div id="life-house" class="life-house"></div>
         <div id="life-character" class="life-character">
@@ -122,7 +140,8 @@
         <div id="life-progress-text" class="life-progress-text"></div>
       </div>
       <div class="life-tiers-list" id="life-tiers-list"></div>
-      <button id="btn-back-home-2" class="btn ghost">← 返回主页</button>
+      <button id="btn-upgrade" class="btn primary upgrade-btn">升级</button>
+      <button id="btn-back-home-2" class="btn ghost">← 返回</button>
     </section>
 
     <!-- ======================= 通用弹窗 ======================= -->
@@ -138,7 +157,7 @@
     <div id="toast" class="toast hidden"></div>
   </div>
 
-  <script src="data.js?v=4"></script>
-  <script src="game.js?v=4"></script>
+  <script src="data.js?v=5"></script>
+  <script src="game.js?v=5"></script>
 </body>
 </html>

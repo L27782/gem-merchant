@@ -9,6 +9,7 @@
     coins: "gem-merchant.coins",
     done: "gem-merchant.done",
     prologue: "gem-merchant.prologueSeen",
+    tier: "gem-merchant.tier",
   };
 
   /* ---------------- 工具 ---------------- */
@@ -35,6 +36,7 @@
   const state = {
     coins: load(LS.coins, 0),
     done: load(LS.done, {}),
+    tier: load(LS.tier, 0),
     prologueSeen: localStorage.getItem(LS.prologue) === "1",
     chapterId: null,
     subId: null,
@@ -80,9 +82,8 @@
   const THRESHOLDS = computeThresholds();
 
   function currentTier() {
-    let t = 0;
-    THRESHOLDS.forEach((x) => { if (state.coins >= x) t++; });
-    return Math.min(t, DATA.lifeTiers.length - 1);
+    const maxIdx = DATA.lifeTiers.length - 1;
+    return Math.min(Math.max(Number(state.tier) || 0, 0), maxIdx);
   }
   const passed = (c, s) => !!state.done[c + "/" + s];
   const key = (c, s) => c + "/" + s;
@@ -111,6 +112,21 @@
     $("#modal").classList.remove("hidden");
   }
   function closeModal() { $("#modal").classList.add("hidden"); }
+
+  function openHtmlModal(title, html, buttons) {
+    $("#modal-title").textContent = title;
+    $("#modal-message").innerHTML = html;
+    const box = $("#modal-buttons");
+    box.innerHTML = "";
+    buttons.forEach((b) => {
+      const btn = document.createElement("button");
+      btn.className = "btn " + (b.cls || "primary");
+      btn.textContent = b.label;
+      btn.onclick = () => { closeModal(); if (b.onClick) b.onClick(); };
+      box.appendChild(btn);
+    });
+    $("#modal").classList.remove("hidden");
+  }
 
   let toastTimer = null;
   function toast(msg, cls) {
@@ -146,8 +162,21 @@
 
   /* ---------------- 主页 ---------------- */
   function renderHome() {
-    $("#home-coins").textContent = state.coins;
-    $("#home-tier").textContent = DATA.lifeTiers[currentTier()].name;
+    const tier = DATA.lifeTiers[currentTier()];
+    const houseEl = $("#home-house");
+    const charEl = $("#home-char");
+    if (houseEl) houseEl.className = "life-house house-" + tier.houseStyle;
+    if (charEl) charEl.className = "life-character clothes-" + tier.clothesStyle;
+    // 左下角进度条：金币 / 下一档门槛
+    const maxIdx = DATA.lifeTiers.length - 1;
+    const next = currentTier() < maxIdx ? THRESHOLDS[currentTier()] : null;
+    const fill = $("#home-progress-fill");
+    const text = $("#home-progress-text");
+    if (fill && text) {
+      const pct = next ? Math.min(100, Math.round(state.coins / next * 100)) : 100;
+      fill.style.width = pct + "%";
+      text.textContent = next ? (state.coins + " / " + next) : (state.coins + " / 满");
+    }
   }
 
   /* ---------------- 关卡选择 ---------------- */
@@ -319,7 +348,7 @@
     $("#hud-lives").textContent = hearts;
   }
 
-  /* ---------------- 生活状况 ---------------- */
+  /* ---------------- 建设（生活状况 + 升级） ---------------- */
   function renderLife() {
     const tier = DATA.lifeTiers[currentTier()];
     $("#life-tier-name").textContent = tier.name;
@@ -327,27 +356,42 @@
     $("#life-house").className = "life-house house-" + tier.houseStyle;
     $("#life-character").className = "life-character clothes-" + tier.clothesStyle;
 
-    // 进度：到下一档还需要多少金币
-    let nextThreshold = null;
-    for (let i = 0; i < THRESHOLDS.length; i++) {
-      if (state.coins < THRESHOLDS[i]) { nextThreshold = THRESHOLDS[i]; break; }
-    }
-    const max = TOTAL;
-    const pct = Math.min(100, Math.round((state.coins / Math.max(max, 1)) * 100));
+    const maxIdx = DATA.lifeTiers.length - 1;
+    const isMax = currentTier() >= maxIdx;
+    const nextThreshold = isMax ? null : THRESHOLDS[currentTier()];
+    const pct = nextThreshold ? Math.min(100, Math.round(state.coins / nextThreshold * 100)) : 100;
     $("#life-progress").style.setProperty("--w", pct + "%");
-    $("#life-progress-text").textContent = nextThreshold == null
-      ? "已满级！金币 " + state.coins + " / " + max
-      : "金币 " + state.coins + " / " + max + "（再得 " + (nextThreshold - state.coins) + " 枚升到 " + DATA.lifeTiers[currentTier() + 1].name + "）";
+    $("#life-progress-text").textContent = isMax
+      ? "已满级！累计金币 " + state.coins
+      : "金币 " + state.coins + " / " + nextThreshold + "（再得 " + Math.max(nextThreshold - state.coins, 0) + " 枚可升级）";
 
     const list = $("#life-tiers-list");
     list.innerHTML = "";
     DATA.lifeTiers.forEach((t, i) => {
-      const reached = i <= currentTier();
       const chip = document.createElement("div");
-      chip.className = "tier-chip" + (i === currentTier() ? " current" : "") + (reached ? " reached" : "");
+      chip.className = "tier-chip" + (i === currentTier() ? " current" : "") + (i <= currentTier() ? " reached" : "");
       chip.innerHTML = '<span class="tier-dot"></span>' + t.name;
       list.appendChild(chip);
     });
+
+    const upBtn = $("#btn-upgrade");
+    const canUp = !isMax && state.coins >= nextThreshold;
+    upBtn.disabled = !canUp;
+    if (isMax) upBtn.textContent = "已达顶富";
+    else if (canUp) upBtn.textContent = "升级 → " + DATA.lifeTiers[currentTier() + 1].name;
+    else upBtn.textContent = "还差 " + (nextThreshold - state.coins) + " 枚金币";
+  }
+
+  function tryUpgrade() {
+    const maxIdx = DATA.lifeTiers.length - 1;
+    if (currentTier() >= maxIdx) return;
+    const need = THRESHOLDS[currentTier()];
+    if (state.coins < need) { toast("金币不足：还差 " + (need - state.coins) + " 枚"); return; }
+    state.tier = currentTier() + 1;
+    save(LS.tier, state.tier);
+    renderLife();
+    renderHome();
+    toast("升级成功！生活状况 → " + DATA.lifeTiers[state.tier].name);
   }
 
   /* ---------------- 导航 ---------------- */
@@ -368,7 +412,29 @@
     "2. 用放大镜（鼠标）指向宝石会放大，点击宝石可查看它显示的知识内容。\n" +
     "3. 认定后点击「确认选择」：选对得 1 枚金币并过关；选错则扣除一次机会。\n" +
     "4. 每关最多允许选错 2 次，第 3 次选错即通关失败，可再来一次或返回主页。\n" +
-    "5. 金币累计到对应档位会自动改善生活：一穷二白 → 贫困户 → 小康 → 中产 → 暴发户 → 顶富。";
+    "5. 在首页点「建设」查看生活状况，金币达到下一档门槛后点「升级」即可改善生活：一穷二白 → 贫困户 → 小康 → 中产 → 暴发户 → 顶富。";
+
+  function showKnowledge() {
+    let html = "";
+    DATA.chapters.forEach((ch) => {
+      html += '<div class="kn-chapter"><h3>' + ch.icon + " " + ch.name + "</h3>";
+      ch.subLevels.forEach((sl) => {
+        html += '<div class="kn-item"><div class="kn-title">' + sl.name + '</div><div class="kn-content">' + sl.correctGem.content + "</div></div>";
+      });
+      html += "</div>";
+    });
+    openHtmlModal("知识点说明", '<div class="kn-list">' + html + "</div>", [{ label: "关闭", cls: "primary" }]);
+  }
+
+  function showCredits() {
+    const html =
+      '<div class="credits">' +
+      '<div class="credit-row"><span>制作人</span><b>刘晨鹏</b></div>' +
+      '<div class="credit-row"><span>制作</span><b>deep seek</b></div>' +
+      '<div class="credit-row"><span>画面</span><b>豆包</b></div>' +
+      "</div>";
+    openHtmlModal("制作构成", html, [{ label: "关闭", cls: "primary" }]);
+  }
 
   /* ---------------- 放大镜跟随 ---------------- */
   function bindMagnifier() {
@@ -403,10 +469,12 @@
     });
 
     $("#btn-start").addEventListener("click", () => { renderChapters(); goStart(); });
-    $("#btn-levels").addEventListener("click", () => { renderChapters(); show("screen-levels"); });
-    $("#btn-life").addEventListener("click", () => { renderLife(); show("screen-life"); });
+    $("#btn-build").addEventListener("click", () => { renderLife(); show("screen-life"); });
     $("#btn-help").addEventListener("click", () => openModal("玩法说明", HELP_TEXT, [{ label: "我知道了", cls: "primary" }]));
+    $("#btn-knowledge").addEventListener("click", showKnowledge);
+    $("#btn-credits").addEventListener("click", showCredits);
     $("#btn-prologue").addEventListener("click", () => { pg = 0; renderPrologue(); show("screen-prologue"); });
+    $("#btn-upgrade").addEventListener("click", tryUpgrade);
 
     $("#btn-back-home").addEventListener("click", goHome);
     $("#btn-back-home-2").addEventListener("click", goHome);
