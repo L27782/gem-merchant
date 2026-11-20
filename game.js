@@ -140,6 +140,7 @@
 
   /* ---------------- 前传 ---------------- */
   let pg = 0;
+  let prologueReturn = "home";
   function renderPrologue() {
     const seg = DATA.prologue[pg];
     const bg = $("#prologue-bg");
@@ -163,10 +164,8 @@
   /* ---------------- 主页 ---------------- */
   function renderHome() {
     const tier = DATA.lifeTiers[currentTier()];
-    const houseEl = $("#home-house");
-    const charEl = $("#home-char");
-    if (houseEl) houseEl.className = "life-house house-" + tier.houseStyle;
-    if (charEl) charEl.className = "life-character clothes-" + tier.clothesStyle;
+    const bg = $("#home-bg");
+    if (bg) bg.style.backgroundImage = 'url("' + tier.image + '")';
     // 左下角进度条：金币 / 下一档门槛
     const maxIdx = DATA.lifeTiers.length - 1;
     const next = currentTier() < maxIdx ? THRESHOLDS[currentTier()] : null;
@@ -353,8 +352,8 @@
     const tier = DATA.lifeTiers[currentTier()];
     $("#life-tier-name").textContent = tier.name;
     $("#life-desc").textContent = "当前服饰：" + tier.clothes + " · 当前住所：" + tier.house;
-    $("#life-house").className = "life-house house-" + tier.houseStyle;
-    $("#life-character").className = "life-character clothes-" + tier.clothesStyle;
+    const stageImg = $("#life-stage-img");
+    if (stageImg) stageImg.style.backgroundImage = 'url("' + tier.image + '")';
 
     const maxIdx = DATA.lifeTiers.length - 1;
     const isMax = currentTier() >= maxIdx;
@@ -398,6 +397,7 @@
   function goHome() { renderHome(); show("screen-home"); }
   function goStart() {
     if (!state.prologueSeen && DATA.prologue.length > 0) {
+      prologueReturn = "levels";
       pg = 0;
       renderPrologue();
       show("screen-prologue");
@@ -450,30 +450,28 @@
 
   /* ---------------- 事件绑定 ---------------- */
   function bind() {
+    function finishPrologue() {
+      localStorage.setItem(LS.prologue, "1");
+      state.prologueSeen = true;
+      if (prologueReturn === "levels") { renderChapters(); show("screen-levels"); }
+      else { renderHome(); show("screen-home"); }
+    }
     $("#prologue-next").addEventListener("click", () => {
       if (pg >= DATA.prologue.length - 1) {
-        localStorage.setItem(LS.prologue, "1");
-        state.prologueSeen = true;
-        renderChapters();
-        show("screen-levels");
+        finishPrologue();
       } else {
         pg += 1;
         renderPrologue();
       }
     });
-    $("#prologue-skip").addEventListener("click", () => {
-      localStorage.setItem(LS.prologue, "1");
-      state.prologueSeen = true;
-      renderChapters();
-      show("screen-levels");
-    });
+    $("#prologue-skip").addEventListener("click", finishPrologue);
 
     $("#btn-start").addEventListener("click", () => { renderChapters(); goStart(); });
     $("#btn-build").addEventListener("click", () => { renderLife(); show("screen-life"); });
     $("#btn-help").addEventListener("click", () => openModal("玩法说明", HELP_TEXT, [{ label: "我知道了", cls: "primary" }]));
     $("#btn-knowledge").addEventListener("click", showKnowledge);
     $("#btn-credits").addEventListener("click", showCredits);
-    $("#btn-prologue").addEventListener("click", () => { pg = 0; renderPrologue(); show("screen-prologue"); });
+    $("#btn-prologue").addEventListener("click", () => { prologueReturn = "home"; pg = 0; renderPrologue(); show("screen-prologue"); });
     $("#btn-upgrade").addEventListener("click", tryUpgrade);
 
     $("#btn-back-home").addEventListener("click", goHome);

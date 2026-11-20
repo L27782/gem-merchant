@@ -92,23 +92,25 @@ html, body {
   display: block; height: 100vh;
 }
 .home-scene { position: absolute; inset: 0; overflow: hidden; }
-.home-scene-sky {
-  position: absolute; top: 0; left: 0; right: 0; height: 60%;
-  background: linear-gradient(#bde3ff, #e8f6ff);
+.home-bg { position: absolute; inset: 0; overflow: hidden; }
+.home-bg-blur {
+  position: absolute; inset: -30px;
+  background-image: inherit;
+  background-size: cover; background-position: center;
+  filter: blur(22px) brightness(0.6);
 }
-.home-scene-ground {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 42%;
-  background: linear-gradient(#cfe8c8, #8dbb7a);
+.home-bg-art {
+  position: absolute; inset: 0;
+  background-image: inherit;
+  background-size: contain; background-position: center; background-repeat: no-repeat;
+  animation: homeBreathe 9s ease-in-out infinite;
 }
-.home-scene #home-house {
-  position: absolute; left: 6%; bottom: 24%;
-  width: 230px; height: 170px;
-  transform: scale(2.4); transform-origin: bottom left;
-}
-.home-scene #home-char {
-  position: absolute; right: 18%; bottom: 16%;
-  width: 90px; height: 200px;
-  transform: scale(2.0); transform-origin: bottom right;
+@keyframes homeBreathe {
+  0%   { transform: scale(1.0) translateY(0); }
+  25%  { transform: scale(1.03) translateY(-6px); }
+  50%  { transform: scale(1.02) translateY(0); }
+  75%  { transform: scale(1.03) translateY(5px); }
+  100% { transform: scale(1.0) translateY(0); }
 }
 .home-title {
   position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
@@ -116,7 +118,7 @@ html, body {
   background: rgba(255,255,255,0.3); padding: 8px 26px; border-radius: 18px;
   backdrop-filter: blur(2px);
 }
-.home-title h1 { font-size: 38px; letter-spacing: 2px; color: #4a3520; text-shadow: 0 2px 8px rgba(255,255,255,0.7); }
+.home-title h1 { font-size: 38px; letter-spacing: 2px; color: #4a3520; text-shadow: 0 2px 8px rgba(255,255,255,0.7); white-space: nowrap; }
 .home-title .subtitle { color: #6b5840; margin: 2px 0 0; font-size: 15px; }
 .home-right-menu {
   position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
@@ -386,8 +388,7 @@ html, body {
   background: linear-gradient(#bde3ff 0%, #dff2ff 55%, #a9cf92 55%, #7fa768);
   border-radius: 18px; overflow: hidden; margin: 16px 0; box-shadow: var(--shadow);
 }
-.life-stage .life-house { position: absolute; left: 10%; bottom: 26%; width: 230px; height: 170px; }
-.life-stage .life-character { position: absolute; right: 16%; bottom: 8%; width: 90px; height: 200px; }
+.life-stage-img { position: absolute; inset: 0; background-size: contain; background-position: center; background-repeat: no-repeat; background-color: #241a10; }
 .life-tier-name { font-size: 30px; font-weight: 800; margin-top: 6px; }
 .life-desc { color: #6b5840; margin: 8px 0 18px; font-size: 15px; }
 

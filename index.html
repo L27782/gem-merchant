@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>宝石商人 · 著作权法邻接权知识学习</title>
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css?v=6" />
 </head>
 <body>
   <div id="app">
@@ -24,12 +24,9 @@
     <!-- ======================= 主页（生活场景 + 大播放键） ======================= -->
     <section id="screen-home" class="screen hidden">
       <div id="home-scene" class="home-scene">
-        <div class="home-scene-sky"></div>
-        <div class="home-scene-ground"></div>
-        <div id="home-house" class="life-house"></div>
-        <div id="home-char" class="life-character">
-          <div class="life-head"></div>
-          <div class="life-body"></div>
+        <div id="home-bg" class="home-bg">
+          <div class="home-bg-blur"></div>
+          <div class="home-bg-art"></div>
         </div>
       </div>
 
@@ -127,11 +124,7 @@
     <section id="screen-life" class="screen hidden">
       <h2 class="page-title">建设 · 我的生活状况</h2>
       <div class="life-stage">
-        <div id="life-house" class="life-house"></div>
-        <div id="life-character" class="life-character">
-          <div class="life-head"></div>
-          <div class="life-body"></div>
-        </div>
+        <div id="life-stage-img" class="life-stage-img"></div>
       </div>
       <div id="life-tier-name" class="life-tier-name">一穷二白</div>
       <div id="life-desc" class="life-desc"></div>
@@ -157,7 +150,7 @@
     <div id="toast" class="toast hidden"></div>
   </div>
 
-  <script src="data.js?v=5"></script>
-  <script src="game.js?v=5"></script>
+  <script src="data.js?v=6"></script>
+  <script src="game.js?v=6"></script>
 </body>
 </html>
