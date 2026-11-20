@@ -182,8 +182,7 @@
   function renderChapters() {
     const list = $("#chapter-list");
     list.innerHTML = "";
-    const romans = ["Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ"];
-    DATA.chapters.forEach((ch, i) => {
+    DATA.chapters.forEach((ch) => {
       const total = ch.subLevels.length;
       const passedCount = ch.subLevels.filter((s) => passed(ch.id, s.id)).length;
       const ready = !ch.pending && total > 0;
@@ -191,7 +190,6 @@
       const card = document.createElement("button");
       card.className = "plank" + (ready ? "" : " pending");
       card.innerHTML =
-        '<span class="plank-roman">' + (romans[i] || (i + 1)) + '</span>' +
         '<span class="plank-name">' + ch.name + '</span>' +
         '<span class="plank-bar"><span class="plank-bar-fill" style="width:' + pct + '%"></span></span>' +
         '<span class="plank-count">' + (ready ? passedCount + " / " + total : "待上线") + '</span>';
@@ -236,6 +234,15 @@
     toast("找出正确的知识点宝石！");
   }
 
+  const ROCK_SPOTS = [
+    { left: 12, top: 46 },
+    { left: 30, top: 41 },
+    { left: 45, top: 50 },
+    { left: 21, top: 59 },
+    { left: 54, top: 55 },
+    { left: 65, top: 58 },
+  ];
+
   function buildStall(sl) {
     const gems = [];
     gems.push({ data: sl.correctGem, isCorrect: true, wrong: false });
@@ -246,41 +253,28 @@
     const container = $("#gems-container");
     container.innerHTML = "";
     gems.forEach((g, i) => {
+      const spot = ROCK_SPOTS[i % ROCK_SPOTS.length];
       const el = document.createElement("div");
-      el.className = "gem gem-" + (i % 7);
+      el.className = "rock-hotspot";
+      el.style.left = spot.left + "%";
+      el.style.top = spot.top + "%";
       el.dataset.index = i;
-      el.innerHTML = '<span class="gem-facet"></span>';
       el.addEventListener("mouseenter", () => setHover(i, true));
       el.addEventListener("mouseleave", () => setHover(i, false));
       el.addEventListener("click", () => onGemClick(i));
       container.appendChild(el);
     });
-    layoutGems();
-  }
-
-  function layoutGems() {
-    const els = $$("#gems-container .gem");
-    const n = els.length;
-    els.forEach((el, i) => {
-      const row = Math.floor(i / 3);
-      const col = i % 3;
-      const left = 10 + col * 26 + (row % 2 ? 6 : 0);
-      const top = 62 - row * 26;
-      el.style.left = left + "%";
-      el.style.top = top + "%";
-      el.style.transform = "rotate(" + (((i * 47) % 24) - 12) + "deg)";
-    });
   }
 
   function setHover(i, on) {
-    const el = $$("#gems-container .gem")[i];
+    const el = $$("#gems-container .rock-hotspot")[i];
     if (!el || el.classList.contains("wrong")) return;
     el.classList.toggle("hovered", on);
     state.hovered = on ? i : null;
   }
 
   function onGemClick(i) {
-    const el = $$("#gems-container .gem")[i];
+    const el = $$("#gems-container .rock-hotspot")[i];
     if (!el || el.classList.contains("wrong")) return;
     const g = state.gems[i];
     state.inspecting = i;
@@ -336,7 +330,7 @@
   function showFail() { show("screen-fail"); }
 
   function markGem(i, cls) {
-    const el = $$("#gems-container .gem")[i];
+    const el = $$("#gems-container .rock-hotspot")[i];
     if (el) { el.classList.add(cls); el.classList.remove("hovered"); }
   }
 

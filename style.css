@@ -222,37 +222,32 @@ html, body {
 }
 .level-planks {
   position: absolute;
-  left: 36.5%; right: 10.5%; top: 26.5%; height: 36%;
+  left: 37%; right: 12%; top: 27%; height: 28%;
   display: flex; justify-content: space-between;
   z-index: 3;
 }
 .plank {
-  position: relative; width: 15%;
+  position: relative; width: 16.5%;
   border: none; background: transparent; padding: 0;
   cursor: pointer; font-family: inherit;
   transition: transform 0.15s;
 }
 .plank:hover { transform: translateY(-5px); }
 .plank.pending { opacity: 0.55; cursor: not-allowed; }
-.plank-roman {
-  position: absolute; left: 0; right: 0; top: 1%;
-  font-size: 15px; font-weight: 800; color: #5a3a18; text-align: center;
-  text-shadow: 0 1px 1px rgba(255,255,255,0.5);
-}
 .plank-name {
-  position: absolute; left: 0; right: 0; top: 59%;
-  font-size: 11px; font-weight: 800; color: #2c1a0a; text-align: center;
-  line-height: 1.2; text-shadow: 0 1px 2px rgba(255,255,255,0.75);
+  position: absolute; left: -6%; right: -6%; top: 61%;
+  font-size: 10px; font-weight: 800; color: #2c1a0a; text-align: center;
+  line-height: 1.2; text-shadow: 0 1px 2px rgba(255,255,255,0.8);
 }
 .plank-bar {
-  position: absolute; left: 12%; right: 12%; top: 80%; height: 7px;
-  border-radius: 4px; background: rgba(40,25,10,0.45); overflow: hidden;
+  position: absolute; left: 11%; right: 11%; top: 79%; height: 6px;
+  border-radius: 4px; background: rgba(40,25,10,0.4); overflow: hidden;
 }
-.plank-bar-fill { display: block; height: 100%; background: linear-gradient(90deg, #ffe08a, #e0a020); }
+.plank-bar-fill { display: block; height: 100%; background: linear-gradient(90deg, #b6f36b, #6fbf2a); }
 .plank-count {
-  position: absolute; left: 0; right: 0; top: 87%;
+  position: absolute; left: 0; right: 0; top: 88%;
   font-size: 9px; font-weight: 700; color: #3a2410; text-align: center;
-  text-shadow: 0 1px 2px rgba(255,255,255,0.75);
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
 }
 
 .sublevel-list { display: flex; flex-direction: column; gap: 12px; width: min(440px, 94%); margin-bottom: 26px; }
@@ -282,9 +277,7 @@ html, body {
 
 .stall-scene {
   position: relative; flex: 1; width: 100%; overflow: hidden;
-  background:
-    radial-gradient(circle at 20% 8%, #fff7d0 0 40px, transparent 41px),
-    linear-gradient(#bde3ff 0%, #dff2ff 40%, #cfe8c8 40%, #8dbb7a 100%);
+  background: url("stall-bg.jpg") center/cover no-repeat;
   cursor: none;
 }
 .scene-hint {
@@ -323,7 +316,25 @@ html, body {
   position: absolute; top: 16%; left: -1.5%; width: 103%; height: 6%;
   background: repeating-linear-gradient(90deg, #fffdf5 0 46px, #e74c3c 46px 92px);
 }
-.gems-container { position: absolute; left: 0; right: 0; top: 24%; bottom: 22%; }
+.gems-container { position: absolute; inset: 0; }
+.rock-hotspot {
+  position: absolute; width: 10%; aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%; cursor: none;
+  transition: box-shadow 0.15s, background 0.15s;
+}
+.rock-hotspot:hover, .rock-hotspot.hovered {
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.85), 0 0 18px 6px rgba(255,220,120,0.75);
+  background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
+}
+.rock-hotspot.correct {
+  box-shadow: 0 0 0 3px #2ecc71, 0 0 22px 8px rgba(46,204,113,0.8);
+}
+.rock-hotspot.wrong {
+  box-shadow: 0 0 0 3px #e74c3c, 0 0 18px 6px rgba(231,76,60,0.6);
+  filter: grayscale(0.6) brightness(0.65);
+  pointer-events: none;
+}
 .stall-table {
   position: absolute; bottom: 0; left: 0; width: 100%; height: 22%;
   background: linear-gradient(#c89452, #9a6a2f);
