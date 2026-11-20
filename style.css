@@ -249,7 +249,7 @@ html, body {
 
 .stall-scene {
   position: relative; flex: 1; width: 100%; overflow: hidden;
-  background: linear-gradient(#efe2cc 0%, #e2cfb2 55%, #c9b394 100%);
+  background: #1a1208 center/cover no-repeat;
   cursor: none;
 }
 .scene-hint {
@@ -288,43 +288,28 @@ html, body {
   position: absolute; top: 16%; left: -1.5%; width: 103%; height: 6%;
   background: repeating-linear-gradient(90deg, #fffdf5 0 46px, #e74c3c 46px 92px);
 }
-.stall-cloth {
-  position: absolute; left: 4%; right: 4%; top: 6%; bottom: 12%;
-  background: linear-gradient(155deg, #c0332f, #962421 55%, #6e1a18);
-  border-radius: 10px;
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.35), inset 0 6px 20px rgba(255,255,255,0.12);
-}
-.gems-container { position: absolute; left: 8%; right: 8%; top: 12%; bottom: 20%; }
+.gems-container { position: absolute; inset: 0; }
 .gem {
   position: absolute;
-  width: 60px; height: 52px;
+  width: 13%; aspect-ratio: 1 / 1;
   transform: translate(-50%, -50%);
-  border-radius: 46% 54% 48% 52% / 52% 46% 54% 48%;
-  box-shadow: inset -6px -8px 14px rgba(0,0,0,0.35), inset 6px 8px 14px rgba(255,255,255,0.28), 0 8px 14px rgba(0,0,0,0.35);
-  transition: transform 0.16s, filter 0.16s, opacity 0.3s;
+  border-radius: 50%; cursor: none;
+  transition: box-shadow 0.15s, background 0.15s;
   z-index: 1;
 }
 .gem:hover, .gem.hovered {
-  transform: translate(-50%, -50%) scale(1.3);
-  filter: drop-shadow(0 0 14px rgba(255,235,160,0.95));
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.9), 0 0 22px 8px rgba(255,220,120,0.8);
+  background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
   z-index: 4;
 }
 .gem.correct {
-  box-shadow: 0 0 0 4px #2ecc71, 0 0 26px 10px rgba(46,204,113,0.85);
+  box-shadow: 0 0 0 4px #2ecc71, 0 0 24px 10px rgba(46,204,113,0.85);
   z-index: 5;
 }
 .gem.wrong {
-  filter: grayscale(0.85) brightness(0.55);
-  box-shadow: 0 0 0 4px #e74c3c;
-  opacity: 0.85; pointer-events: none;
+  box-shadow: 0 0 0 4px #e74c3c, 0 0 18px 6px rgba(231,76,60,0.6);
+  pointer-events: none;
 }
-.gem-0 { background: linear-gradient(135deg, #d3d8dc, #7f8a93 60%, #4d565e); }
-.gem-1 { background: linear-gradient(135deg, #f0e1a8, #d2b25e 55%, #8a6a20); }
-.gem-2 { background: linear-gradient(135deg, #bfc8ce, #717c86 60%, #454e57); }
-.gem-3 { background: linear-gradient(135deg, #efe6c8, #c9b573 55%, #8a7a3a); }
-.gem-4 { background: linear-gradient(135deg, #d6dade, #8b959d 60%, #56606a); }
-.gem-5 { background: linear-gradient(135deg, #f2d99a, #d8a83f 55%, #8a640e); }
-.gem-6 { background: linear-gradient(135deg, #c4ccd2, #7a858f 60%, #4a535b); }
 .stall-table {
   position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
   background: linear-gradient(#c89452, #9a6a2f);
@@ -335,44 +320,6 @@ html, body {
   content: ""; position: absolute; left: 6%; right: 6%; top: 60%; height: 8px;
   background: #7a5122; border-radius: 4px;
 }
-
-/* ---------------- 宝石 ---------------- */
-.gem {
-  position: absolute;
-  width: 58px; height: 58px;
-  clip-path: polygon(50% 0%, 100% 42%, 78% 100%, 22% 100%, 0% 42%);
-  transition: transform 0.16s ease, filter 0.16s ease, opacity 0.3s;
-  z-index: 1;
-}
-.gem:hover, .gem.hovered {
-  transform: scale(1.55) rotate(0deg) !important;
-  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9));
-  z-index: 4;
-}
-.gem-facet {
-  position: absolute; left: 18%; top: 8%; width: 26%; height: 40%;
-  background: rgba(255, 255, 255, 0.45);
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-}
-.gem::after {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-size: 26px; font-weight: 900; color: #fff;
-  opacity: 0; transition: opacity 0.2s;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-}
-
-.gem-0 { background: radial-gradient(circle at 30% 26%, #a6cfc2, #6fa08f 55%, #3f6a5b); }
-.gem-1 { background: radial-gradient(circle at 30% 26%, #a4c9a6, #6e9a74 55%, #3e6144); }
-.gem-2 { background: radial-gradient(circle at 30% 26%, #a3c0cf, #6d92a6 55%, #3c5866); }
-.gem-3 { background: radial-gradient(circle at 30% 26%, #9ed0b2, #63a07e 55%, #37624b); }
-.gem-4 { background: radial-gradient(circle at 30% 26%, #a9b8c2, #7a8e99 55%, #44535d); }
-.gem-5 { background: radial-gradient(circle at 30% 26%, #a3cec8, #6fa39d 55%, #3e635e); }
-.gem-6 { background: radial-gradient(circle at 30% 26%, #b0bd9f, #869574 55%, #4e5a41); }
-
-.gem.correct { opacity: 1; z-index: 5; filter: drop-shadow(0 0 12px #2ecc71); }
-.gem.correct::after { content: "✓"; opacity: 1; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
-.gem.wrong { filter: grayscale(1) brightness(0.55); opacity: 0.85; pointer-events: none; }
-.gem.wrong::after { content: "✗"; opacity: 1; color: #ff7b7b; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
 
 /* ---------------- 放大镜 ---------------- */
 .magnifier {

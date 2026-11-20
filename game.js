@@ -230,17 +230,39 @@
     buildStall(sl);
     closeGemPopup();
     show("screen-game");
+    layoutGems();
     toast("找出正确的知识点宝石！");
   }
 
-  const GEM_SPOTS = [
-    [14, 24], [40, 16], [67, 28], [24, 54], [52, 48], [79, 62], [37, 80],
-  ];
+  const STALL_SCENES = {
+    portrait: {
+      src: "stall-portrait.jpg", w: 1030, h: 2136,
+      spots: [
+        { fx: 0.245, fy: 0.539 },
+        { fx: 0.44, fy: 0.518 },
+        { fx: 0.64, fy: 0.555 },
+        { fx: 0.32, fy: 0.636 },
+      ],
+    },
+    landscape: {
+      src: "stall-landscape.jpg", w: 2014, h: 1053,
+      spots: [
+        { fx: 0.264, fy: 0.572 },
+        { fx: 0.427, fy: 0.556 },
+        { fx: 0.61, fy: 0.60 },
+        { fx: 0.316, fy: 0.689 },
+      ],
+    },
+  };
+
+  function currentStallScene() {
+    return window.innerHeight > window.innerWidth ? STALL_SCENES.portrait : STALL_SCENES.landscape;
+  }
 
   function buildStall(sl) {
     const gems = [];
     gems.push({ data: sl.correctGem, isCorrect: true, wrong: false });
-    (sl.wrongGems || []).forEach((w) => gems.push({ data: w, isCorrect: false, wrong: false }));
+    (sl.wrongGems || []).slice(0, 3).forEach((w) => gems.push({ data: w, isCorrect: false, wrong: false }));
     shuffle(gems);
     state.gems = gems;
 
@@ -248,7 +270,7 @@
     container.innerHTML = "";
     gems.forEach((g, i) => {
       const el = document.createElement("div");
-      el.className = "gem gem-" + (i % 7);
+      el.className = "gem";
       el.dataset.index = i;
       el.addEventListener("mouseenter", () => setHover(i, true));
       el.addEventListener("mouseleave", () => setHover(i, false));
@@ -259,11 +281,20 @@
   }
 
   function layoutGems() {
-    const els = $$("#gems-container .gem");
-    els.forEach((el, i) => {
-      const p = GEM_SPOTS[i % GEM_SPOTS.length];
-      el.style.left = p[0] + "%";
-      el.style.top = p[1] + "%";
+    const scene = $("#stall-scene");
+    if (!scene) return;
+    const cfg = currentStallScene();
+    scene.style.backgroundImage = 'url("' + cfg.src + '")';
+    const rect = scene.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    if (!W || !H) return;
+    const scale = Math.max(W / cfg.w, H / cfg.h);
+    const dispW = cfg.w * scale, dispH = cfg.h * scale;
+    const offX = (W - dispW) / 2, offY = (H - dispH) / 2;
+    $$("#gems-container .gem").forEach((el, i) => {
+      const spot = cfg.spots[i % cfg.spots.length];
+      el.style.left = (offX + spot.fx * dispW) + "px";
+      el.style.top = (offY + spot.fy * dispH) + "px";
     });
   }
 
@@ -487,6 +518,7 @@
   /* ---------------- 启动 ---------------- */
   function init() {
     bind();
+    window.addEventListener("resize", layoutGems);
     if (DATA.prologue.length === 0) state.prologueSeen = true;
     renderHome();
     show("screen-home");
