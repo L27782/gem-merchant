@@ -245,12 +245,12 @@
       ],
     },
     landscape: {
-      src: "stall-landscape.jpg", w: 2014, h: 1053,
+      src: "stall-landscape.jpg", w: 2015, h: 1053,
       spots: [
-        { fx: 0.264, fy: 0.572 },
-        { fx: 0.427, fy: 0.556 },
-        { fx: 0.61, fy: 0.60 },
-        { fx: 0.316, fy: 0.689 },
+        { fx: 0.267, fy: 0.556 },
+        { fx: 0.424, fy: 0.544 },
+        { fx: 0.61, fy: 0.589 },
+        { fx: 0.319, fy: 0.678 },
       ],
     },
   };
