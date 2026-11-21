@@ -142,7 +142,10 @@ window.STORY_DATA = [
       "story2-17.jpg",
       "story2-18.jpg",
       "story2-19.jpg",
-      "story2-20.jpg"
+      "story2-20.jpg",
+      "story2-21.jpg",
+      "story2-22.jpg",
+      "story2-23.jpg"
     ]
   },
   {
