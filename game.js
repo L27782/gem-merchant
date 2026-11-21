@@ -5,11 +5,16 @@
   "use strict";
 
   const DATA = window.GAME_DATA;
+  const STORY = window.STORY_DATA || [];
+
+  /* 大关卡下标 → 通关后解锁的剧情段（story[0]=竹篮=前传，不占关卡） */
+  const REWARD_SEGS = [[1], [2], [3], [4], [5, 6]];
   const LS = {
     coins: "gem-merchant.coins",
     done: "gem-merchant.done",
     prologue: "gem-merchant.prologueSeen",
     tier: "gem-merchant.tier",
+    story: "gem-merchant.story",
   };
 
   /* ---------------- 工具 ---------------- */
@@ -37,6 +42,7 @@
     coins: load(LS.coins, 0),
     done: load(LS.done, {}),
     tier: load(LS.tier, 0),
+    storyDone: load(LS.story, {}),
     prologueSeen: localStorage.getItem(LS.prologue) === "1",
     chapterId: null,
     subId: null,
@@ -88,6 +94,17 @@
   const passed = (c, s) => !!state.done[c + "/" + s];
   const key = (c, s) => c + "/" + s;
 
+  function chapterPassedCount(ch) {
+    return ch.subLevels.filter((s) => passed(ch.id, s.id)).length;
+  }
+  function isChapterDone(ch) {
+    return ch.subLevels.length > 0 && chapterPassedCount(ch) === ch.subLevels.length;
+  }
+  function isChapterUnlocked(chIndex) {
+    if (chIndex <= 0) return true;
+    return isChapterDone(DATA.chapters[chIndex - 1]);
+  }
+
   /* ---------------- 屏幕切换 ---------------- */
   function show(id) {
     $$(".screen").forEach((s) => s.classList.add("hidden"));
@@ -138,27 +155,36 @@
     toastTimer = setTimeout(() => t.classList.add("hidden"), 1700);
   }
 
-  /* ---------------- 前传 ---------------- */
-  let pg = 0;
-  let prologueReturn = "home";
-  function renderPrologue() {
-    const seg = DATA.prologue[pg];
-    const bg = $("#prologue-bg");
-    const textEl = $("#prologue-text");
-    if (seg && seg.image) {
-      bg.style.backgroundImage = 'url("' + seg.image + '")';
-    } else {
-      bg.style.backgroundImage = "none";
+  /* ---------------- 剧情阅读（前传 / 通关奖励共用） ---------------- */
+  let storyReturn = null;
+
+  function showStoryChapter(segIndex, onFinish) {
+    const seg = STORY[segIndex];
+    if (!seg) { if (onFinish) onFinish(); return; }
+    storyReturn = onFinish || null;
+    const el = $("#prologue-text");
+    el.innerHTML =
+      '<div class="p-speaker">' + seg.title + "</div>" +
+      seg.paragraphs.map((p) => "<p>" + p + "</p>").join("");
+    show("screen-prologue");
+  }
+
+  function finishStory() {
+    const cb = storyReturn;
+    storyReturn = null;
+    if (cb) cb();
+  }
+
+  function playStories(segIdxs, onDone) {
+    let k = 0;
+    function next() {
+      if (k >= segIdxs.length) { if (onDone) onDone(); return; }
+      const segIdx = segIdxs[k++];
+      state.storyDone[segIdx] = true;
+      save(LS.story, state.storyDone);
+      showStoryChapter(segIdx, next);
     }
-    if (seg && seg.noText) {
-      textEl.classList.add("hidden");
-    } else {
-      textEl.classList.remove("hidden");
-      textEl.innerHTML = seg
-        ? '<div class="p-speaker">' + seg.speaker + '</div><p>' + seg.text + "</p>"
-        : "";
-    }
-    $("#prologue-next").textContent = pg >= DATA.prologue.length - 1 ? "开始游戏" : "下一步 ▶";
+    next();
   }
 
   /* ---------------- 主页 ---------------- */
@@ -182,17 +208,20 @@
   function renderChapters() {
     const list = $("#chapter-list");
     list.innerHTML = "";
-    DATA.chapters.forEach((ch) => {
+    DATA.chapters.forEach((ch, idx) => {
       const total = ch.subLevels.length;
-      const passedCount = ch.subLevels.filter((s) => passed(ch.id, s.id)).length;
-      const ready = !ch.pending && total > 0;
+      const passedCount = chapterPassedCount(ch);
+      const done = isChapterDone(ch);
+      const unlocked = isChapterUnlocked(idx);
       const card = document.createElement("button");
-      card.className = "chapter-card" + (ready ? "" : " pending");
+      let progressText = done ? "✓ 已完成" : passedCount + " / " + total;
+      if (!unlocked) progressText = "🔒 完成上一章解锁";
+      card.className = "chapter-card" + (done ? " done" : "") + (unlocked ? "" : " locked");
       card.innerHTML =
-        '<div class="chapter-icon">' + ch.icon + '</div>' +
+        '<div class="chapter-icon">' + (unlocked ? ch.icon : "🔒") + '</div>' +
         '<div class="chapter-name">' + ch.name + '</div>' +
-        '<div class="chapter-progress">' + (ready ? passedCount + " / " + total : "待上线") + '</div>';
-      if (ready) card.addEventListener("click", () => showSubLevels(ch.id));
+        '<div class="chapter-progress">' + progressText + '</div>';
+      if (unlocked) card.addEventListener("click", () => showSubLevels(ch.id));
       list.appendChild(card);
     });
   }
@@ -358,6 +387,26 @@
     const idx = ch.subLevels.findIndex((s) => s.id === state.subId);
     const next = idx >= 0 && idx < ch.subLevels.length - 1 ? ch.subLevels[idx + 1] : null;
     const msg = firstTime ? "答对了！获得 1 枚金币 🪙" : "答对了！（本关金币已获得过）";
+
+    const chapterIdx = DATA.chapters.indexOf(ch);
+    if (isChapterDone(ch)) {
+      const rewardIdxs = (REWARD_SEGS[chapterIdx] || []).filter((i2) => !state.storyDone[i2]);
+      if (rewardIdxs.length > 0) {
+        playStories(rewardIdxs, () => {
+          const allDone = DATA.chapters.every((c) => isChapterDone(c));
+          if (allDone) {
+            openModal("🎉 全部完成", "所有大关卡完成，全部剧情已解锁！可在主页「剧情回顾」阅读整个故事。", [
+              { label: "查看剧情", cls: "primary", onClick: () => showStoryReview() },
+              { label: "返回主页", cls: "ghost", onClick: goHome },
+            ]);
+          } else {
+            goHome();
+          }
+        });
+        return;
+      }
+    }
+
     openModal("🎉 答对了", msg, next
       ? [{ label: "进入下一关", cls: "primary", onClick: () => startSubLevel(ch.id, next.id) }]
       : [{ label: "本章完成，返回关卡", cls: "primary", onClick: () => showSubLevels(ch.id) }]
@@ -441,11 +490,13 @@
   /* ---------------- 导航 ---------------- */
   function goHome() { renderHome(); show("screen-home"); }
   function goStart() {
-    if (!state.prologueSeen && DATA.prologue.length > 0) {
-      prologueReturn = "levels";
-      pg = 0;
-      renderPrologue();
-      show("screen-prologue");
+    if (!state.prologueSeen && STORY.length > 0) {
+      showStoryChapter(0, () => {
+        localStorage.setItem(LS.prologue, "1");
+        state.prologueSeen = true;
+        renderChapters();
+        show("screen-levels");
+      });
     } else {
       show("screen-levels");
     }
@@ -469,6 +520,31 @@
       html += "</div>";
     });
     openHtmlModal("知识点说明", '<div class="kn-list">' + html + "</div>", [{ label: "关闭", cls: "primary" }]);
+  }
+
+  function isStoryUnlocked(i) {
+    return !!state.storyDone[i];
+  }
+
+  function showStoryReview(focusIndex) {
+    let html = '<div class="story-review">';
+    STORY.forEach((seg, i) => {
+      if (isStoryUnlocked(i)) {
+        html += '<div class="story-seg"><h3>' + seg.title + '</h3>' +
+          seg.paragraphs.map((p) => "<p>" + p + "</p>").join("") + "</div>";
+      } else {
+        html += '<div class="story-seg locked"><h3>🔒 ' + seg.title + '</h3>' +
+          '<p class="story-lock-hint">完成对应的大关卡后解锁。</p></div>';
+      }
+    });
+    html += "</div>";
+    openHtmlModal("剧情回顾", html, [{ label: "关闭", cls: "primary" }]);
+    if (typeof focusIndex === "number") {
+      setTimeout(() => {
+        const el = $$(".story-seg")[focusIndex];
+        if (el) el.scrollIntoView({ block: "start" });
+      }, 60);
+    }
   }
 
   function showCredits() {
@@ -495,28 +571,15 @@
 
   /* ---------------- 事件绑定 ---------------- */
   function bind() {
-    function finishPrologue() {
-      localStorage.setItem(LS.prologue, "1");
-      state.prologueSeen = true;
-      if (prologueReturn === "levels") { renderChapters(); show("screen-levels"); }
-      else { renderHome(); show("screen-home"); }
-    }
-    $("#prologue-next").addEventListener("click", () => {
-      if (pg >= DATA.prologue.length - 1) {
-        finishPrologue();
-      } else {
-        pg += 1;
-        renderPrologue();
-      }
-    });
-    $("#prologue-skip").addEventListener("click", finishPrologue);
+    $("#prologue-next").addEventListener("click", finishStory);
+    $("#prologue-skip").addEventListener("click", finishStory);
 
     $("#btn-start").addEventListener("click", () => { renderChapters(); goStart(); });
     $("#btn-build").addEventListener("click", () => { renderLife(); show("screen-life"); });
     $("#btn-help").addEventListener("click", () => openModal("玩法说明", HELP_TEXT, [{ label: "我知道了", cls: "primary" }]));
     $("#btn-knowledge").addEventListener("click", showKnowledge);
+    $("#btn-story").addEventListener("click", () => showStoryReview());
     $("#btn-credits").addEventListener("click", showCredits);
-    $("#btn-prologue").addEventListener("click", () => { prologueReturn = "home"; pg = 0; renderPrologue(); show("screen-prologue"); });
     $("#btn-upgrade").addEventListener("click", tryUpgrade);
 
     $("#btn-back-home").addEventListener("click", goHome);
@@ -535,7 +598,11 @@
   function init() {
     bind();
     window.addEventListener("resize", layoutGems);
-    if (DATA.prologue.length === 0) state.prologueSeen = true;
+    // 前传（竹篮）从开始即解锁
+    if (!state.storyDone[0]) {
+      state.storyDone[0] = true;
+      save(LS.story, state.storyDone);
+    }
     renderHome();
     show("screen-home");
   }

@@ -52,39 +52,31 @@ html, body {
 .page-title { font-size: 28px; margin: 10px 0 6px; }
 .page-hint { color: #9a8a75; margin-bottom: 18px; font-size: 14px; }
 
-/* ---------------- 前传（图片 + 底部字幕） ---------------- */
+/* ---------------- 前传（剧情文本） ---------------- */
 #screen-prologue {
-  padding: 0;
-  position: relative;
-  background: #140d05;
-  overflow: hidden;
-  justify-content: flex-end;
+  padding: 0; position: relative; overflow: hidden;
+  background: linear-gradient(#f6ead2, #ecd9b8);
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
 }
-.prologue-scene { position: absolute; inset: 0; }
-.prologue-bg {
-  position: absolute; inset: 0;
-  background-color: #140d05;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-}
+.prologue-scene { display: none; }
 .prologue-buttons {
   position: absolute; top: 14px; right: 16px; z-index: 5;
   display: flex; gap: 10px;
 }
 .prologue-text {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 4;
-  padding: 46px 24px 22px;
-  background: linear-gradient(to top, rgba(10,6,2,0.92) 0%, rgba(10,6,2,0.72) 55%, transparent 100%);
-  color: #fff;
-  text-align: center;
+  position: relative; z-index: 4;
+  width: min(680px, 90%); max-height: 66vh; overflow-y: auto;
+  background: #fffdf7; border-radius: 18px;
+  padding: 28px 30px;
+  box-shadow: var(--shadow);
+  color: #3a2e22;
+  text-align: left;
   font-size: 18px;
-  line-height: 1.8;
-  max-height: 60vh;
-  overflow-y: auto;
+  line-height: 1.9;
 }
-.prologue-text p { margin: 0; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
-.p-speaker { font-weight: 700; color: #ffcf7a; margin-bottom: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+.prologue-text p { margin: 0; text-indent: 2em; }
+.p-speaker { font-weight: 700; color: #8a5a28; margin-bottom: 8px; text-align: center; }
 
 /* ---------------- 主页（生活场景背景 + 按钮） ---------------- */
 #screen-home {
@@ -186,6 +178,23 @@ html, body {
 .credits { text-align: left; }
 .credit-row { display: flex; justify-content: space-between; padding: 10px 4px; border-bottom: 1px dashed #e5d9c8; font-size: 16px; }
 .credit-row b { color: var(--primary-dark); }
+
+/* 剧情回顾 */
+.story-review { text-align: left; }
+.story-seg { margin-bottom: 18px; }
+.story-seg h3 { font-size: 18px; color: #8a5a28; margin-bottom: 8px; }
+.story-seg p { font-size: 15px; line-height: 1.85; color: #4a3b2c; margin: 0 0 10px; text-indent: 2em; }
+.story-seg.locked { opacity: 0.55; }
+.story-lock-hint { font-size: 13px; color: #9a8a75; text-indent: 0; }
+
+/* 关卡锁定/完成 */
+.chapter-card.locked { opacity: 0.6; cursor: not-allowed; }
+.chapter-card.locked:hover { transform: none; background: var(--card); }
+.chapter-card.done .chapter-progress { color: var(--green); }
+.chapter-card.done .chapter-name { color: #2c7a4d; }
+
+/* 长内容弹窗可滚动 */
+.modal-message { max-height: 62vh; overflow-y: auto; }
 
 /* 升级按钮 */
 .upgrade-btn { margin-bottom: 10px; }
