@@ -121,6 +121,28 @@ window.STORY_DATA = [
       "从那天起，我有了别人没有的东西。别人赌石靠运气，我靠眼睛。也是从那天起，我开始想知道，那面镜子是谁的。",
       "我又问奶奶。她躺在床上，腿垫着枕头，闭着眼说：“那篮子不是我的。我抱你回来那天，它就搁在那儿了。”",
       "我问：“那是谁的。”，她睡着了。"
+    ],
+    "images": [
+      "story2-01.jpg",
+      "story2-02.jpg",
+      "story2-03.jpg",
+      "story2-04.jpg",
+      "story2-05.jpg",
+      "story2-06.jpg",
+      "story2-07.jpg",
+      "story2-08.jpg",
+      "story2-09.jpg",
+      "story2-10.jpg",
+      "story2-11.jpg",
+      "story2-12.jpg",
+      "story2-13.jpg",
+      "story2-14.jpg",
+      "story2-15.jpg",
+      "story2-16.jpg",
+      "story2-17.jpg",
+      "story2-18.jpg",
+      "story2-19.jpg",
+      "story2-20.jpg"
     ]
   },
   {
