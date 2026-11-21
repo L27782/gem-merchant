@@ -189,15 +189,18 @@
 
   function renderScene() {
     const screen = $("#screen-prologue");
-    const bg = $("#prologue-bg");
-    const textEl = $("#prologue-text");
+    const img = $("#story-img");
+    const textEl = $("#story-text");
     const s = sceneList[sceneIdx];
-    if (s && s.image) {
-      bg.style.backgroundImage = 'url("' + s.image + '")';
-      screen.classList.add("has-image");
-    } else {
-      bg.style.backgroundImage = "none";
-      screen.classList.remove("has-image");
+    if (img) {
+      if (s && s.image) {
+        img.onerror = () => img.classList.remove("show");
+        img.src = s.image;
+        img.classList.add("show");
+      } else {
+        img.removeAttribute("src");
+        img.classList.remove("show");
+      }
     }
     textEl.innerHTML = s
       ? '<div class="p-speaker">' + s.title + "</div><p>" + s.text + "</p>"
@@ -206,7 +209,7 @@
     $("#prologue-next").textContent = last ? "结束" : "下一步 ▶";
     const prev = $("#prologue-prev");
     if (prev) prev.style.visibility = sceneIdx > 0 ? "visible" : "hidden";
-    if (textEl) textEl.scrollTop = 0;
+    if (screen) screen.scrollTop = 0;
   }
 
   function nextScene() {
@@ -620,7 +623,7 @@
       '<div class="credit-row"><span>制作人</span><b>刘晨鹏</b></div>' +
       '<div class="credit-row"><span>制作</span><b>deep seek</b></div>' +
       '<div class="credit-row"><span>画面</span><b>豆包</b></div>' +
-      '<div class="credit-row"><span>版本</span><b>v38</b></div>' +
+      '<div class="credit-row"><span>版本</span><b>v39</b></div>' +
       "</div>";
     openHtmlModal("制作构成", html, [{ label: "关闭", cls: "primary" }]);
   }
