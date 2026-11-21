@@ -60,6 +60,7 @@ window.GAME_DATA = {
       id: "overview",
       name: "邻接权概述",
       icon: "📖",
+      scene: "overview",
       subLevels: [
         {
           id: "concept",
@@ -125,6 +126,8 @@ window.GAME_DATA = {
       id: "producers",
       name: "录音录像制作者权",
       icon: "🎙️",
+      scene: "producers",
+      easySub: "term",
       subLevels: [
         {
           id: "object",
@@ -199,6 +202,8 @@ window.GAME_DATA = {
       id: "broadcasters",
       name: "广播组织者权",
       icon: "📡",
+      scene: "broadcasters",
+      easySub: "term",
       subLevels: [
         {
           id: "object",
@@ -273,6 +278,8 @@ window.GAME_DATA = {
       id: "performers",
       name: "表演者权",
       icon: "🎭",
+      scene: "performers",
+      easySub: "term",
       subLevels: [
         {
           id: "object",
@@ -360,6 +367,8 @@ window.GAME_DATA = {
       id: "publishers",
       name: "图书、期刊出版者权",
       icon: "📰",
+      scene: "publishers",
+      easySub: "term",
       subLevels: [
         {
           id: "subject",

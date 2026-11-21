@@ -234,32 +234,45 @@
     toast("找出正确的知识点宝石！");
   }
 
-  const STALL_SCENES = {
-    portrait: {
-      src: "stall-portrait.jpg?v=2", w: 1030, h: 2136,
-      spots: [
-        { fx: 0.245, fy: 0.539 },
-        { fx: 0.44, fy: 0.518 },
-        { fx: 0.64, fy: 0.555 },
-        { fx: 0.32, fy: 0.636 },
-      ],
-    },
-    landscape: {
-      src: "stall-landscape.jpg?v=2", w: 2015, h: 1053,
-      spots: [
-        { fx: 0.267, fy: 0.556 },
-        { fx: 0.424, fy: 0.544 },
-        { fx: 0.61, fy: 0.589 },
-        { fx: 0.319, fy: 0.678 },
-      ],
-    },
+  const SCENES = {
+    overview: { landscape: "scene-overview-landscape.jpg", portrait: "scene-overview-portrait.jpg" },
+    "producers-easy": { landscape: "scene-producers-easy-landscape.jpg", portrait: "scene-producers-easy-portrait.jpg" },
+    "producers-hard": { landscape: "scene-producers-hard-landscape.jpg", portrait: "scene-producers-hard-portrait.jpg" },
+    "broadcasters-easy": { landscape: "scene-broadcasters-easy-landscape.jpg", portrait: "scene-broadcasters-easy-portrait.jpg" },
+    "broadcasters-hard": { landscape: "scene-broadcasters-hard-landscape.jpg", portrait: "scene-broadcasters-hard-portrait.jpg" },
+    "performers-easy": { landscape: "scene-performers-easy-landscape.jpg", portrait: "scene-performers-easy-portrait.jpg" },
+    "performers-hard": { landscape: "scene-performers-hard-landscape.jpg", portrait: "scene-performers-hard-portrait.jpg" },
+    "publishers-easy": { landscape: "scene-publishers-easy-landscape.jpg", portrait: "scene-publishers-easy-portrait.jpg" },
+    "publishers-hard": { landscape: "scene-publishers-hard-landscape.jpg", portrait: "scene-publishers-hard-portrait.jpg" },
+  };
+  const SCENE_SIZE = { landscape: { w: 2015, h: 1053 }, portrait: { w: 1030, h: 2136 } };
+  const SCENE_SPOTS = {
+    landscape: [
+      { fx: 0.26, fy: 0.533 },
+      { fx: 0.42, fy: 0.50 },
+      { fx: 0.61, fy: 0.578 },
+      { fx: 0.30, fy: 0.689 },
+    ],
+    portrait: [
+      { fx: 0.24, fy: 0.539 },
+      { fx: 0.44, fy: 0.518 },
+      { fx: 0.63, fy: 0.55 },
+      { fx: 0.31, fy: 0.636 },
+    ],
   };
 
-  function currentStallScene() {
-    return window.innerHeight > window.innerWidth ? STALL_SCENES.portrait : STALL_SCENES.landscape;
+  let currentSceneKey = "overview";
+
+  function isPortraitScreen() { return window.innerHeight > window.innerWidth; }
+
+  function sceneKeyFor(sl) {
+    const ch = chapterById[sl.chapterId];
+    if (!ch || ch.scene === "overview") return "overview";
+    return ch.scene + (sl.id === ch.easySub ? "-easy" : "-hard");
   }
 
   function buildStall(sl) {
+    currentSceneKey = sceneKeyFor(sl);
     const gems = [];
     gems.push({ data: sl.correctGem, isCorrect: true, wrong: false });
     (sl.wrongGems || []).slice(0, 3).forEach((w) => gems.push({ data: w, isCorrect: false, wrong: false }));
@@ -283,16 +296,19 @@
   function layoutGems() {
     const scene = $("#stall-scene");
     if (!scene) return;
-    const cfg = currentStallScene();
-    scene.style.backgroundImage = 'url("' + cfg.src + '")';
+    const orient = isPortraitScreen() ? "portrait" : "landscape";
+    const map = SCENES[currentSceneKey] || SCENES.overview;
+    scene.style.backgroundImage = 'url("' + map[orient] + '")';
+    const size = SCENE_SIZE[orient];
+    const spots = SCENE_SPOTS[orient];
     const rect = scene.getBoundingClientRect();
     const W = rect.width, H = rect.height;
     if (!W || !H) return;
-    const scale = Math.max(W / cfg.w, H / cfg.h);
-    const dispW = cfg.w * scale, dispH = cfg.h * scale;
+    const scale = Math.max(W / size.w, H / size.h);
+    const dispW = size.w * scale, dispH = size.h * scale;
     const offX = (W - dispW) / 2, offY = (H - dispH) / 2;
     $$("#gems-container .gem").forEach((el, i) => {
-      const spot = cfg.spots[i % cfg.spots.length];
+      const spot = spots[i % spots.length];
       el.style.left = (offX + spot.fx * dispW) + "px";
       el.style.top = (offY + spot.fy * dispH) + "px";
     });
