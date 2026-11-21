@@ -620,6 +620,7 @@
       '<div class="credit-row"><span>制作人</span><b>刘晨鹏</b></div>' +
       '<div class="credit-row"><span>制作</span><b>deep seek</b></div>' +
       '<div class="credit-row"><span>画面</span><b>豆包</b></div>' +
+      '<div class="credit-row"><span>版本</span><b>v38</b></div>' +
       "</div>";
     openHtmlModal("制作构成", html, [{ label: "关闭", cls: "primary" }]);
   }

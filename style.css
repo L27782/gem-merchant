@@ -61,9 +61,8 @@ html, body {
 .prologue-bg {
   position: relative; width: 100%; flex: 0 0 62%; min-height: 0;
   background: center/contain no-repeat;
-  display: none;
+  display: block;
 }
-#screen-prologue.has-image .prologue-bg { display: block; }
 .prologue-buttons {
   position: absolute; top: 12px; right: 14px; z-index: 5;
   display: flex; gap: 8px;
@@ -82,7 +81,7 @@ html, body {
   font-size: 17px; line-height: 1.85;
 }
 #screen-prologue:not(.has-image) .prologue-text {
-  flex: 0 1 auto; max-height: 72vh; margin: auto;
+  flex: 1 1 auto; max-height: none; margin: 8px auto 18px;
 }
 .prologue-text p { margin: 0; text-indent: 2em; }
 .p-speaker { font-weight: 700; color: #8a5a28; margin-bottom: 8px; text-align: center; }
