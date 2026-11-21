@@ -1,4 +1,4 @@
-/* 自动生成：辨珍剧情。text = 文字版段落；scenes = 画面版一幕一幕 */
+/* 自动生成：辨珍剧情。text = 文字版段落；scenes = 画面版一幕一幕；images = 每幕配图 */
 window.STORY_DATA = [
   {
     "id": "story1",
@@ -45,6 +45,25 @@ window.STORY_DATA = [
       "门后的钉子上挂着一只竹篮。就是那只。奶奶一直没扔，拿来装针头线脑。我提过要扔，她说留着，以后有用。",
       "去年冬天，我问她：“这篮子哪儿来的。”她正在纳鞋底，针停在半空，说：“那年篮子里，不止有你。”我问还有什么。她把线拉紧，说：“睡吧。”",
       "那天夜里我在门后站了很久。第一次觉得那只空篮子，比装满东西的时候重。"
+    ],
+    "images": [
+      "story1-01.jpg",
+      "story1-02.jpg",
+      "story1-03.jpg",
+      "story1-04.jpg",
+      "story1-05.jpg",
+      "story1-06.jpg",
+      "story1-07.jpg",
+      "story1-08.jpg",
+      "story1-09.jpg",
+      "story1-10.jpg",
+      "story1-11.jpg",
+      "story1-12.jpg",
+      "story1-13.jpg",
+      "story1-14.jpg",
+      "story1-15.jpg",
+      "story1-16.jpg",
+      "story1-17.jpg"
     ]
   },
   {
