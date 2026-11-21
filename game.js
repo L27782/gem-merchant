@@ -592,12 +592,26 @@
   }
 
   function showStoryPictures() {
-    const scenes = [];
+    const any = STORY.some((_, i) => isStoryUnlocked(i));
+    if (!any) { toast("还没有可回顾的剧情"); return; }
+    let html = '<div class="story-pick">';
     STORY.forEach((seg, i) => {
-      if (isStoryUnlocked(i)) scenes.push.apply(scenes, scenesFromSegment(seg));
+      const ok = isStoryUnlocked(i);
+      html += '<button class="story-pick-item' + (ok ? "" : " locked") + '" data-idx="' + i + '"' + (ok ? "" : " disabled") + '>' +
+        '<span class="sp-name">' + (ok ? seg.title : "🔒 " + seg.title) + '</span>' +
+        '<span class="sp-count">' + (ok ? seg.scenes.length + " 幕" : "未解锁") + '</span>' +
+        "</button>";
     });
-    if (!scenes.length) { toast("还没有可回顾的剧情"); return; }
-    playScenes(scenes, () => goHome());
+    html += "</div>";
+    openHtmlModal("剧情回顾 · 图文版", html, [{ label: "关闭", cls: "primary" }]);
+    $$(".story-pick-item").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        const idx = parseInt(btn.getAttribute("data-idx"), 10);
+        closeModal();
+        playScenes(scenesFromSegment(STORY[idx]), () => goHome());
+      });
+    });
   }
 
   function showCredits() {
