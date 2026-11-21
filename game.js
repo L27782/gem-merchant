@@ -155,36 +155,72 @@
     toastTimer = setTimeout(() => t.classList.add("hidden"), 1700);
   }
 
-  /* ---------------- 剧情阅读（前传 / 通关奖励共用） ---------------- */
-  let storyReturn = null;
+  /* ---------------- 剧情播放（一幕一幕：前传 / 通关奖励 / 图文版回顾） ---------------- */
+  let sceneList = [];
+  let sceneIdx = 0;
+  let sceneOnFinish = null;
 
-  function showStoryChapter(segIndex, onFinish) {
-    const seg = STORY[segIndex];
-    if (!seg) { if (onFinish) onFinish(); return; }
-    storyReturn = onFinish || null;
-    const el = $("#prologue-text");
-    el.innerHTML =
-      '<div class="p-speaker">' + seg.title + "</div>" +
-      seg.paragraphs.map((p) => "<p>" + p + "</p>").join("");
+  function scenesFromSegment(seg) {
+    const imgs = seg.images || [];
+    const list = seg.scenes || seg.text || [];
+    return list.map((text, i) => ({ title: seg.title, text: text, image: imgs[i] || null }));
+  }
+
+  function playScenes(scenes, onFinish) {
+    sceneList = scenes || [];
+    sceneIdx = 0;
+    sceneOnFinish = onFinish || null;
+    renderScene();
     show("screen-prologue");
   }
 
-  function finishStory() {
-    const cb = storyReturn;
-    storyReturn = null;
-    if (cb) cb();
+  function playStories(segIdxs, onDone) {
+    const scenes = [];
+    segIdxs.forEach((i) => {
+      const seg = STORY[i];
+      if (!seg) return;
+      state.storyDone[i] = true;
+      scenes.push.apply(scenes, scenesFromSegment(seg));
+    });
+    save(LS.story, state.storyDone);
+    if (!scenes.length) { if (onDone) onDone(); return; }
+    playScenes(scenes, onDone);
   }
 
-  function playStories(segIdxs, onDone) {
-    let k = 0;
-    function next() {
-      if (k >= segIdxs.length) { if (onDone) onDone(); return; }
-      const segIdx = segIdxs[k++];
-      state.storyDone[segIdx] = true;
-      save(LS.story, state.storyDone);
-      showStoryChapter(segIdx, next);
+  function renderScene() {
+    const screen = $("#screen-prologue");
+    const bg = $("#prologue-bg");
+    const textEl = $("#prologue-text");
+    const s = sceneList[sceneIdx];
+    if (s && s.image) {
+      bg.style.backgroundImage = 'url("' + s.image + '")';
+      screen.classList.add("has-image");
+    } else {
+      bg.style.backgroundImage = "none";
+      screen.classList.remove("has-image");
     }
-    next();
+    textEl.innerHTML = s
+      ? '<div class="p-speaker">' + s.title + "</div><p>" + s.text + "</p>"
+      : "";
+    const last = sceneIdx >= sceneList.length - 1;
+    $("#prologue-next").textContent = last ? "结束" : "下一步 ▶";
+    const prev = $("#prologue-prev");
+    if (prev) prev.style.visibility = sceneIdx > 0 ? "visible" : "hidden";
+    if (textEl) textEl.scrollTop = 0;
+  }
+
+  function nextScene() {
+    if (sceneIdx >= sceneList.length - 1) exitScenes();
+    else { sceneIdx += 1; renderScene(); }
+  }
+
+  function prevScene() { if (sceneIdx > 0) { sceneIdx -= 1; renderScene(); } }
+
+  function exitScenes() {
+    const cb = sceneOnFinish;
+    sceneOnFinish = null;
+    sceneList = [];
+    if (cb) cb();
   }
 
   /* ---------------- 主页 ---------------- */
@@ -491,7 +527,7 @@
   function goHome() { renderHome(); show("screen-home"); }
   function goStart() {
     if (!state.prologueSeen && STORY.length > 0) {
-      showStoryChapter(0, () => {
+      playScenes(scenesFromSegment(STORY[0]), () => {
         localStorage.setItem(LS.prologue, "1");
         state.prologueSeen = true;
         renderChapters();
@@ -526,25 +562,36 @@
     return !!state.storyDone[i];
   }
 
-  function showStoryReview(focusIndex) {
+  function showStoryReview() {
+    openModal("剧情回顾", "选择阅读方式：", [
+      { label: "文字版", cls: "primary", onClick: showStoryText },
+      { label: "图文版", cls: "primary", onClick: showStoryPictures },
+      { label: "关闭", cls: "ghost" },
+    ]);
+  }
+
+  function showStoryText() {
     let html = '<div class="story-review">';
     STORY.forEach((seg, i) => {
       if (isStoryUnlocked(i)) {
         html += '<div class="story-seg"><h3>' + seg.title + '</h3>' +
-          seg.paragraphs.map((p) => "<p>" + p + "</p>").join("") + "</div>";
+          (seg.text || []).map((p) => "<p>" + p + "</p>").join("") + "</div>";
       } else {
         html += '<div class="story-seg locked"><h3>🔒 ' + seg.title + '</h3>' +
           '<p class="story-lock-hint">完成对应的大关卡后解锁。</p></div>';
       }
     });
     html += "</div>";
-    openHtmlModal("剧情回顾", html, [{ label: "关闭", cls: "primary" }]);
-    if (typeof focusIndex === "number") {
-      setTimeout(() => {
-        const el = $$(".story-seg")[focusIndex];
-        if (el) el.scrollIntoView({ block: "start" });
-      }, 60);
-    }
+    openHtmlModal("剧情回顾 · 文字版", html, [{ label: "关闭", cls: "primary" }]);
+  }
+
+  function showStoryPictures() {
+    const scenes = [];
+    STORY.forEach((seg, i) => {
+      if (isStoryUnlocked(i)) scenes.push.apply(scenes, scenesFromSegment(seg));
+    });
+    if (!scenes.length) { toast("还没有可回顾的剧情"); return; }
+    playScenes(scenes, () => goHome());
   }
 
   function showCredits() {
@@ -571,8 +618,9 @@
 
   /* ---------------- 事件绑定 ---------------- */
   function bind() {
-    $("#prologue-next").addEventListener("click", finishStory);
-    $("#prologue-skip").addEventListener("click", finishStory);
+    $("#prologue-next").addEventListener("click", nextScene);
+    $("#prologue-prev").addEventListener("click", prevScene);
+    $("#prologue-skip").addEventListener("click", exitScenes);
 
     $("#btn-start").addEventListener("click", () => { renderChapters(); goStart(); });
     $("#btn-build").addEventListener("click", () => { renderLife(); show("screen-life"); });

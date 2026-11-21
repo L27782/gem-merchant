@@ -52,31 +52,41 @@ html, body {
 .page-title { font-size: 28px; margin: 10px 0 6px; }
 .page-hint { color: #9a8a75; margin-bottom: 18px; font-size: 14px; }
 
-/* ---------------- 前传（剧情文本） ---------------- */
+/* ---------------- 前传 / 剧情（一幕一幕） ---------------- */
 #screen-prologue {
   padding: 0; position: relative; overflow: hidden;
   background: linear-gradient(#f6ead2, #ecd9b8);
   display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
+  justify-content: flex-end; align-items: center;
 }
-.prologue-scene { display: none; }
+.prologue-bg {
+  position: absolute; inset: 0;
+  background: center/contain no-repeat;
+  background-color: #0f0a05;
+  display: none;
+}
+#screen-prologue.has-image .prologue-bg { display: block; }
+#screen-prologue.has-image { background: #0f0a05; }
 .prologue-buttons {
   position: absolute; top: 14px; right: 16px; z-index: 5;
   display: flex; gap: 10px;
 }
 .prologue-text {
   position: relative; z-index: 4;
-  width: min(680px, 90%); max-height: 66vh; overflow-y: auto;
-  background: #fffdf7; border-radius: 18px;
-  padding: 28px 30px;
+  width: min(680px, 92%); max-height: 62vh; overflow-y: auto;
+  background: #fffdf7; border-radius: 16px;
+  padding: 24px 28px; margin-bottom: 22px;
   box-shadow: var(--shadow);
-  color: #3a2e22;
-  text-align: left;
-  font-size: 18px;
-  line-height: 1.9;
+  color: #3a2e22; text-align: left;
+  font-size: 18px; line-height: 1.9;
+}
+#screen-prologue.has-image .prologue-text {
+  background: linear-gradient(to top, rgba(10,6,2,0.94) 0%, rgba(10,6,2,0.75) 100%);
+  color: #fff;
 }
 .prologue-text p { margin: 0; text-indent: 2em; }
 .p-speaker { font-weight: 700; color: #8a5a28; margin-bottom: 8px; text-align: center; }
+#screen-prologue.has-image .p-speaker { color: #ffcf7a; }
 
 /* ---------------- 主页（生活场景背景 + 按钮） ---------------- */
 #screen-home {
